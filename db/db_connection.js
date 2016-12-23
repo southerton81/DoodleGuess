@@ -14,9 +14,6 @@ var pool = mysql.createPool({
 DbConnection = {};
 
 DbConnection.runQueryWithCb = function (query, next) {
-
-    var str = fs.readFileSync('./pwd');
-    
     pool.getConnection(function (err, connection) {
         if (err) {
             res.json({ "code": 100, "status": "Error in connection database" });

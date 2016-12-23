@@ -2,13 +2,15 @@ var User = require("./../models/user.js");
 var DbConnection = require("./../db/db_connection.js");
 var mysql = require('mysql');
 var async = require('async');
+var pwdhashing = require("./../utils/pwdhashing.js");
 var HttpError = require('./../error/errors.js').HttpError;
 var AuthError = require('./../error/errors.js').AuthError;
 
 UserController = {};
 
 UserController.create = function (userName, userPassword, next) {
-    var user = new User(userName, userPassword);
+    hashedPassword = pwdhashing(userPassword);
+    var user = new User(userName, hashedPassword);
     var query = 'INSERT INTO USER SET ' + mysql.escape(user);
 
     DbConnection.runQueryWithCb(query, function (err, rows) {
@@ -21,9 +23,10 @@ UserController.findOneWithPassword = function (userName, userPassword, next) {
 
     DbConnection.runQueryWithCb(query, function (err, rows) {
         if (rows != null && rows.length > 0) {
-            var dbPassword = rows[0].Password;
-            if (dbPassword != null && dbPassword != undefined) {
-                if (userPassword === dbPassword) {
+            var storedPassword = rows[0].Password;
+            if (storedPassword != null && storedPassword != undefined) {
+                hashedUserPassword = pwdhashing(userPassword);
+                if (hashedUserPassword === storedPassword) {
                     return next(err, new User(userName, userPassword));
                 }
                 return next(new AuthError('Wrong password'));
