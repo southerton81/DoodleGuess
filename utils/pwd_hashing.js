@@ -4,9 +4,8 @@ var fs = require('fs');
 var salt = fs.readFileSync('./salt').toString();
 
 var hashPassword = function(password) {
-    var hash = crypto.createHmac('sha256', salt);
-    hash.update(password);
-    var value = hash.digest('hex');
+    const key = crypto.pbkdf2Sync(password, salt, 100000, 128, 'sha512');
+    var value = key.toString('hex').substr(0, 256);
     return value;
 };
 

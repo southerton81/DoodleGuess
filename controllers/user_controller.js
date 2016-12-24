@@ -2,7 +2,7 @@ var User = require("./../models/user.js");
 var DbConnection = require("./../db/db_connection.js");
 var mysql = require('mysql');
 var async = require('async');
-var pwdhashing = require("./../utils/pwdhashing.js");
+var pwdhashing = require("./../utils/pwd_hashing.js");
 var HttpError = require('./../error/errors.js').HttpError;
 var AuthError = require('./../error/errors.js').AuthError;
 
@@ -41,9 +41,9 @@ UserController.findOne = function (userName, next) {
 
     DbConnection.runQueryWithCb(query, function (err, rows) {
         if (rows != null && rows.length > 0) {
-            next(err, new User(userName, ''));
+            return next(err, new User(userName, ''));
         }
-        next(new AuthError('No such user'));
+        return next(new AuthError('No such user'));
     });
 }
 
