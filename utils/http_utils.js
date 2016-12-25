@@ -2,7 +2,7 @@ var DatabaseError = require('./../error/errors.js').HttpError;
 
 var HttpUtils = {}
 
-HttpUtils.get = function(url) {
+HttpUtils.get = function (url, postProcessCallback) {
     return new Promise((resolve, reject) => {
         const httpLib = url.startsWith('https') ? require('https') : require('http');
         const request = httpLib.get(url, (response) => {
@@ -11,7 +11,9 @@ HttpUtils.get = function(url) {
             }
             const body = [];
             response.on('data', (chunk) => body.push(chunk));
-            response.on('end', () => resolve(body.join('')));
+            response.on('end', () => {
+                resolve(postProcessCallback(body.join('')));
+            });
         });
         request.on('error', (err) => reject(err))
     })

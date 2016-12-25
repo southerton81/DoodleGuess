@@ -49,7 +49,6 @@ DashboardController.getState = function (req, res, next) {
                 if (turnId == 0)
                     SpeakTurnGenerator.generateSpeakTurn()
                         .then(feed => {
-                            var picturesDescriptorsFeed = JSON.parse(feed);
                             res.status(200);
                             res.end();
                         })
