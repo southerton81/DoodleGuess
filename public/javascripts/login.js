@@ -15,7 +15,8 @@ class LoginForm extends React.Component {
         xhttp.send(params);
 
         if (xhttp.status == 200 || xhttp.status == 201) {
-            ReactDOM.render(React.createElement(WelcomeLabel, { label: xhttp.getResponseHeader("userName") }), document.getElementById('login-app'));
+            ReactDOM.render(React.createElement(WelcomeLabel, { label: xhttp.getResponseHeader("userName") }),
+                document.getElementById('header'));
         }
 
         alert(xhttp.status);
@@ -68,7 +69,7 @@ class WelcomeLabel extends React.Component {
         xhttp.send();
 
         if (xhttp.status == 200) {
-            ReactDOM.render(React.createElement(LoginForm, null), document.getElementById('login-app'));
+            ReactDOM.render(React.createElement(LoginForm, null), document.getElementById('app'));
         }
     }
 
@@ -86,8 +87,14 @@ class WelcomeLabel extends React.Component {
     var xhttp = new XMLHttpRequest();
     xhttp.open("GET", "dashboard", false);
     xhttp.send();
-    if (xhttp.status == 200)
-        ReactDOM.render(React.createElement(WelcomeLabel, { label: xhttp.getResponseHeader("userName") }), document.getElementById('login-app'));
+    if (xhttp.status == 200) {
+        ReactDOM.render(React.createElement(WelcomeLabel, {label: xhttp.getResponseHeader("userName")}),
+            document.getElementById('app'));
+
+        var responseObject = JSON.parse(xhttp.response);
+        if (responseObject.turn == "speak")
+            SpeakTurn.show(responseObject.image);
+    }
     else
-        ReactDOM.render(React.createElement(LoginForm, null), document.getElementById('login-app'));
+        ReactDOM.render(React.createElement(LoginForm, null), document.getElementById('header'));
  } ());

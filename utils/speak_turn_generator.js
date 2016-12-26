@@ -52,33 +52,42 @@ var SpeakTurnGenerator = {}
 SpeakTurnGenerator.generateSpeakTurn = function () {
     var index = vocabulary.length * Math.random();
     index = Math.round(index);
-    const maxImages = 5;
     var request = "https://api.flickr.com/services/feeds/photos_public.gne?tags=" + vocabulary[index] + "&format=json&nojsoncallback=1";
+
     return HttpUtils.get(request, function(body) {
         try {
             body = body.replace(/\\'/g, "'");
             var feed = JSON.parse(body);
             var indexesSet = new Set();
+            const maxImages = 5;
 
             if (feed.items.length > 0) {
                 if (feed.items.length < maxImages) {
-                    indexesSet.add(Array.from(Array(feed.items.length).keys()))
+                    indexesSet.add(Array.from(Array(feed.items.length - 1).keys()))
                 } else {
                     while (indexesSet.size < maxImages)
-                        indexesSet.add(Math.round(Math.random() * feed.items.length));
+                        indexesSet.add(Math.round(Math.random() * (feed.items.length - 1)));
                 }
 
                 var setValues = indexesSet.values();
-                var selectedImage = feed.items[setValues.next().value].media.m;
+                let index = setValues.next();
+                if (index.done) return {}
+                var selectedImage = feed.items[index.value].media.m;
+
+                index = setValues.next()
+                var additionalImages = [];
+                while (!index.done) {
+                    additionalImages.push(feed.items[index.value].media.m);
+                    index = setValues.next();
+                }
+                return { selectedImage, additionalImages };
             }
         } catch (err) {
             console.log(err.toString());
+            console.log("body:");
+            console.log(body);
             return {};
         }
-
-        return {
-
-        };
     });
 }
 

@@ -48,8 +48,17 @@ DashboardController.getState = function (req, res, next) {
             .then(turnId => {
                 if (turnId == 0)
                     SpeakTurnGenerator.generateSpeakTurn()
-                        .then(feed => {
-                            res.status(200);
+                        .then(imageLinks => {
+
+                            if ('selectedImage' in imageLinks && 'additionalImages' in imageLinks) {
+                                res.status(200).json({
+                                    turn: "speak",
+                                    image: imageLinks.selectedImage
+                                });
+                            } else {
+                                res.status(500);
+                            }
+
                             res.end();
                         })
                         .catch(error => {
