@@ -89,7 +89,7 @@ class WelcomeLabel extends React.Component {
     xhttp.send();
     if (xhttp.status == 200) {
         ReactDOM.render(React.createElement(WelcomeLabel, {label: xhttp.getResponseHeader("userName")}),
-            document.getElementById('app'));
+            document.getElementById('header'));
 
         var responseObject = JSON.parse(xhttp.response);
         if (responseObject.turn == "speak")

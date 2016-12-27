@@ -16,24 +16,17 @@ DbConnection = {};
 DbConnection.runQueryWithCb = function (query, next) {
     pool.getConnection(function (err, connection) {
         if (err) {
-            res.json({ "code": 100, "status": "Error in connection database" });
-            return;
+            return err;
         }
 
-        console.log('connected as id ' + connection.threadId);
-
         connection.on('error', function (err) {
-            res.json({ "code": 100, "status": "Error in connection database" });
-            return;
+            return err;
         });
 
         connection.query(query, function (err, rows) {
             connection.release();
-            if (!err) {
-                next.apply(this, [err, rows]);
-            } else console.log(err);
+            next.apply(this, [err, rows]);
         });
-
     });
 }
 
@@ -41,13 +34,11 @@ DbConnection.runQuery = function(query) {
     return new Promise(function (resolve, reject) {
         pool.getConnection(function (err, connection) {
             if (err) {
-                return reject(new DatabaseError(100, 'Error in connection database'));
+                return reject(err);
             }
 
-            console.log('connected as id ' + connection.threadId);
-
             connection.on('error', function (err) {
-                return reject(new DatabaseError(100, 'Error in connection database'));
+                return reject(err);
             });
 
             connection.query(query, function (err, rows) {
@@ -55,7 +46,7 @@ DbConnection.runQuery = function(query) {
                 if (!err) {
                     return resolve(rows);
                 } else {
-                    return reject(new DatabaseError(100, 'Error in connection database'));
+                    return reject(err);
                 }
             });
         });

@@ -3,7 +3,7 @@ var DatabaseError = require('./../error/errors.js').HttpError;
 var HttpUtils = {}
 
 HttpUtils.get = function (url, postProcessCallback) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve,    reject) => {
         const httpLib = url.startsWith('https') ? require('https') : require('http');
         const request = httpLib.get(url, (response) => {
             if (response.statusCode < 200 || response.statusCode > 299) {
@@ -12,7 +12,12 @@ HttpUtils.get = function (url, postProcessCallback) {
             const body = [];
             response.on('data', (chunk) => body.push(chunk));
             response.on('end', () => {
-                resolve(postProcessCallback(body.join('')));
+                try {
+                    let result = postProcessCallback(body.join(''));
+                    resolve(result);
+                } catch (err) {
+                    reject(err);
+                }
             });
         });
         request.on('error', (err) => reject(err))

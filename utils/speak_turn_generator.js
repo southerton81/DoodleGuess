@@ -54,39 +54,36 @@ SpeakTurnGenerator.generateSpeakTurn = function () {
     index = Math.round(index);
     var request = "https://api.flickr.com/services/feeds/photos_public.gne?tags=" + vocabulary[index] + "&format=json&nojsoncallback=1";
 
-    return HttpUtils.get(request, function(body) {
-        try {
-            body = body.replace(/\\'/g, "'");
-            var feed = JSON.parse(body);
-            var indexesSet = new Set();
-            const maxImages = 5;
+    console.log(vocabulary[index]);
+    return HttpUtils.get(request, function (body) {
+        body = body.replace(/\\'/g, "'");
+        var feed = JSON.parse(body);
+        var indexesSet = new Set();
+        const maxImages = 5;
 
-            if (feed.items.length > 0) {
-                if (feed.items.length < maxImages) {
-                    indexesSet.add(Array.from(Array(feed.items.length - 1).keys()))
-                } else {
-                    while (indexesSet.size < maxImages)
-                        indexesSet.add(Math.round(Math.random() * (feed.items.length - 1)));
-                }
-
-                var setValues = indexesSet.values();
-                let index = setValues.next();
-                if (index.done) return {}
-                var selectedImage = feed.items[index.value].media.m;
-
-                index = setValues.next()
-                var additionalImages = [];
-                while (!index.done) {
-                    additionalImages.push(feed.items[index.value].media.m);
-                    index = setValues.next();
-                }
-                return { selectedImage, additionalImages };
+        if (feed.items.length > 0) {
+            if (feed.items.length < maxImages) {
+                indexesSet.add(Array.from(Array(feed.items.length - 1).keys()))
+            } else {
+                while (indexesSet.size < maxImages)
+                    indexesSet.add(Math.round(Math.random() * (feed.items.length - 1)));
             }
-        } catch (err) {
-            console.log(err.toString());
-            console.log("body:");
-            console.log(body);
-            return {};
+
+            var setValues = indexesSet.values();
+            let index = setValues.next();
+
+            if (index.done)
+               throw new Error();
+
+            var selectedImage = feed.items[index.value].media.m;
+
+            index = setValues.next()
+            var additionalImages = [];
+            while (!index.done) {
+                additionalImages.push(feed.items[index.value].media.m);
+                index = setValues.next();
+            }
+            return { selectedImage, additionalImages };
         }
     });
 }
