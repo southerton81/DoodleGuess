@@ -5,7 +5,8 @@ class SpeakTurnView extends React.Component {
     }
 
     render() {
-        return React.createElement('img', {src: this.props.image});
+        return React.createElement('div', {},
+            React.createElement('img', {src: this.props.image}));
     }
 }
 

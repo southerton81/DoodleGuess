@@ -1,15 +1,19 @@
 var User = require("./../models/user.js");
 var DbConnection = require("./../db/db_connection.js");
 var mysql = require('mysql');
-var async = require('async');
 var Promise = require('promise');
 var DatabaseError = require('./../error/errors.js').DatabaseError;
 var SpeakTurnGenerator = require('./../utils/speak_turn_generator.js');
 
+TurnId = {
+    SPEAK : 0,
+    LISTEN : 1
+}
+
 function createTurnId(userName, next) {
     var userIdQuery = 'SELECT UserId FROM USER WHERE Name = ' + mysql.escape(userName);
 
-    let turnId = 0;
+    let turnId = TurnId.SPEAK;
     let userId;
     return DbConnection.runQuery(userIdQuery)
         .then(rows => {
@@ -25,25 +29,6 @@ function createTurnId(userName, next) {
         })
         .then(rows => {
             return { turnId, userId };
-        });
-}
-
-function saveSpeakTurn(userId, imageLinks) {
-    let images = JSON.stringify(imageLinks.additionalImages);
-    let insertNewSpeakTurnQuery = 'REPLACE INTO INTERIM_SPEAKTURN VALUES (' + userId + ', \'' +
-        imageLinks.selectedImage + '\', ' + '\'' + images + '\', null);';
-    return DbConnection.runQuery(insertNewSpeakTurnQuery);
-}
-
-function createSpeakTurn(userId) {
-    let selectedImage;
-    return SpeakTurnGenerator.generateSpeakTurn()
-        .then(imageLinks => {
-            selectedImage = imageLinks.selectedImage;
-            return saveSpeakTurn(userId, imageLinks);
-        })
-        .then(rows => {
-            return { turn: "speak", image: selectedImage}
         });
 }
 
@@ -65,12 +50,14 @@ DashboardController.getState = function (req, res, next) {
                 if (rows.length == 0) {
                     return createTurnId(userName, next);
                 }
-                let turn = rows[0].Turn;
+                let turnId = rows[0].Turn;
                 let userId = rows[0].UserId;
-                return { turn, userId }
+                return { turnId, userId }
             })
             .then(userTurn => {
-                return createSpeakTurn(userTurn.userId);
+                if (userTurn.turnId == TurnId.SPEAK) {
+                    return SpeakTurnGenerator.getSpeakTurn(userTurn.userId);
+                }
             })
             .then(jsonResponse => {
                 res.status(200).json(jsonResponse).end();

@@ -15,8 +15,7 @@ class LoginForm extends React.Component {
         xhttp.send(params);
 
         if (xhttp.status == 200 || xhttp.status == 201) {
-            ReactDOM.render(React.createElement(WelcomeLabel, { label: xhttp.getResponseHeader("userName") }),
-                document.getElementById('header'));
+            updateDashboard();
         }
 
         alert(xhttp.status);
@@ -57,7 +56,7 @@ class LoginForm extends React.Component {
     }
 }
 
-class WelcomeLabel extends React.Component {
+class WelcomeForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {};
@@ -69,32 +68,41 @@ class WelcomeLabel extends React.Component {
         xhttp.send();
 
         if (xhttp.status == 200) {
-            ReactDOM.render(React.createElement(LoginForm, null), document.getElementById('app'));
+            ReactDOM.render(React.createElement(LoginForm, null), document.getElementById('header'));
         }
     }
 
     render() {
-        return React.createElement('p', {},
+        let element = React.createElement('p', {},
             "Hello, " + this.props.label,
             React.createElement('button', {
                 type: 'button',
                 onClick: this.onLogout
             }, "Logout"));
+
+        return element;
     }
 }
 
-(function main() {
+function updateDashboard() {
     var xhttp = new XMLHttpRequest();
     xhttp.open("GET", "dashboard", false);
     xhttp.send();
-    if (xhttp.status == 200) {
-        ReactDOM.render(React.createElement(WelcomeLabel, {label: xhttp.getResponseHeader("userName")}),
-            document.getElementById('header'));
 
-        var responseObject = JSON.parse(xhttp.response);
-        if (responseObject.turn == "speak")
-            SpeakTurn.show(responseObject.image);
-    }
-    else
+    if (xhttp.status != 200)
+        return false;
+
+    ReactDOM.render(React.createElement(WelcomeForm, {label: xhttp.getResponseHeader("userName")}),
+        document.getElementById('header'));
+
+    var responseObject = JSON.parse(xhttp.response);
+    if (responseObject.turn == "speak")
+        SpeakTurn.show(responseObject.image);
+
+    return true;
+}
+
+(function main() {
+    if (!updateDashboard())
         ReactDOM.render(React.createElement(LoginForm, null), document.getElementById('header'));
- } ());
+} ());
