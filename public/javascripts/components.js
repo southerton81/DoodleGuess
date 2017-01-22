@@ -1,3 +1,15 @@
+class SpeakTurnView extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {};
+    }
+
+    render() {
+        return React.createElement('div', {},
+            React.createElement('img', {src: this.props.image}));
+    }
+}
+
 class LoginForm extends React.Component {
     constructor(props) {
         super(props);
@@ -15,7 +27,7 @@ class LoginForm extends React.Component {
         xhttp.send(params);
 
         if (xhttp.status == 200 || xhttp.status == 201) {
-            updateDashboard();
+            showGame();
         }
 
         alert(xhttp.status);
@@ -68,7 +80,7 @@ class WelcomeForm extends React.Component {
         xhttp.send();
 
         if (xhttp.status == 200) {
-            ReactDOM.render(React.createElement(LoginForm, null), document.getElementById('header'));
+            onShowLogin();
         }
     }
 
@@ -84,25 +96,3 @@ class WelcomeForm extends React.Component {
     }
 }
 
-function updateDashboard() {
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("GET", "dashboard", false);
-    xhttp.send();
-
-    if (xhttp.status != 200)
-        return false;
-
-    ReactDOM.render(React.createElement(WelcomeForm, {label: xhttp.getResponseHeader("userName")}),
-        document.getElementById('header'));
-
-    var responseObject = JSON.parse(xhttp.response);
-    if (responseObject.turn == "speak")
-        SpeakTurn.show(responseObject.image);
-
-    return true;
-}
-
-(function main() {
-    if (!updateDashboard())
-        ReactDOM.render(React.createElement(LoginForm, null), document.getElementById('header'));
-} ());
