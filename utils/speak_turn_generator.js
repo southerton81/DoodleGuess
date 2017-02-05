@@ -1,5 +1,6 @@
 var HttpUtils = require('./../utils/http_utils');
 var mysql = require('mysql');
+var TurnId = require('./turn_id')
 
 var vocabulary = ["area",
     "book",
@@ -104,7 +105,7 @@ var SpeakTurnGenerator = {
                 return SpeakTurnGenerator.saveSpeakTurn(userId, imageLinks);
             })
             .then(rows => {
-                return { turn: "speak", image: selectedImage}
+                return { turn: TurnId.SPEAK, image: selectedImage}
             });
     },
 
@@ -117,9 +118,9 @@ var SpeakTurnGenerator = {
                 }
 
                 let selectedImage = rows[0].Image;
-                return { turn: "speak", image: selectedImage}
+                return { turn: TurnId.SPEAK, image: selectedImage}
             })
     }
-
 }
+
 module.exports = SpeakTurnGenerator;

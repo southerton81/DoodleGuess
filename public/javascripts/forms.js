@@ -1,4 +1,4 @@
-class SpeakTurnView extends React.Component {
+class SpeakTurnForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {};
@@ -46,7 +46,7 @@ class LoginForm extends React.Component {
     }
 
     createLoginForm() {
-        return React.createElement('form', {},
+        return React.createElement('form', {key:1},
             React.createElement('input', {
                 type: 'name',
                 placeholder: 'Name or email',

@@ -1,12 +1,16 @@
-
 var nodes = [];
+
+var TurnId = {
+    SPEAK: 0,
+    LISTEN: 1
+}
 
 function showGame() {
     var xhttp = new XMLHttpRequest();
     xhttp.open("GET", "dashboard", false);
     xhttp.send();
 
-    if (xhttp.status != 200)
+    if (xhttp.status != 200) 
         return false;
 
     var responseObject = JSON.parse(xhttp.response);
@@ -22,15 +26,15 @@ function onShowTurn(userName, responseObject) {
     nodes = [];
     nodes.push(React.createElement(WelcomeForm, { label : userName }));
 
-    if (responseObject.turn == "speak")
-        nodes.push(React.createElement(SpeakTurnView, { image: responseObject.image }));
+    if (responseObject.turn == TurnId.SPEAK)
+        nodes.push(React.createElement(SpeakTurnForm, { image: responseObject.image }));
 
     renderApp(nodes);
 }
 
 function onShowLogin() {
     nodes = [];
-    nodes.push(React.createElement(LoginForm, null));
+    nodes.push(React.createElement(LoginForm,  null));
     renderApp(nodes);
 }
 

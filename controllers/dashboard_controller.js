@@ -4,13 +4,9 @@ var mysql = require('mysql');
 var Promise = require('promise');
 var DatabaseError = require('./../error/errors.js').DatabaseError;
 var SpeakTurnGenerator = require('./../utils/speak_turn_generator.js');
+var TurnId = require('./../utils/turn_id.js');
 
-TurnId = {
-    SPEAK : 0,
-    LISTEN : 1
-}
-
-function createTurnId(userName, next) {
+function createTurnId(userName) {
     var userIdQuery = 'SELECT UserId FROM USER WHERE Name = ' + mysql.escape(userName);
 
     let turnId = TurnId.SPEAK;
@@ -32,6 +28,12 @@ function createTurnId(userName, next) {
         });
 }
 
+function getTurnIdFromRow(row) {
+    let turnId = row.Turn;
+    let userId = row.UserId;
+    return { turnId, userId }
+}
+
 DashboardController = {}
 
 DashboardController.getState = function (req, res, next) {
@@ -42,17 +44,16 @@ DashboardController.getState = function (req, res, next) {
         let userName = req.user.Name;
         res.setHeader('userName', userName);
 
-        let turnQuery = 'SELECT Turn, USER.UserId FROM USER, TURN WHERE Name = ' + mysql.escape(userName)
+        let turnQuery = 'SELECT Turn, USER.UserId FROM USER, TURN WHERE Name = '
+            + mysql.escape(userName)
             + ' AND TURN.UserId = USER.UserId';
 
         DbConnection.runQuery(turnQuery)
             .then(rows => {
                 if (rows.length == 0) {
-                    return createTurnId(userName, next);
+                    return createTurnId(userName);
                 }
-                let turnId = rows[0].Turn;
-                let userId = rows[0].UserId;
-                return { turnId, userId }
+                return getTurnIdFromRow(rows[0]);
             })
             .then(userTurn => {
                 if (userTurn.turnId == TurnId.SPEAK) {
