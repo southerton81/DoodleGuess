@@ -1,12 +1,22 @@
+
 class SpeakTurnForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {};
     }
 
+    onSpeak(event) {
+        console.log("speak"); 
+        VoiceRecorder.startRecoring();
+    }
+
     render() {
         return React.createElement('div', {},
-            React.createElement('img', {src: this.props.image}));
+            React.createElement('img', {src: this.props.image}),
+            React.createElement('button', {
+                type: 'button',
+                onClick: this.onSpeak
+            }, "Describe"));
     }
 }
 
@@ -46,7 +56,7 @@ class LoginForm extends React.Component {
     }
 
     createLoginForm() {
-        return React.createElement('form', {key:1},
+        return React.createElement('form', null,
             React.createElement('input', {
                 type: 'name',
                 placeholder: 'Name or email',
