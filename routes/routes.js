@@ -19,4 +19,18 @@ router.get('/dashboard', function (req, res, next) {
   DashboardController.getState(req, res, next);
 });
 
+router.post('/voice', function (req, res, next) {
+  console.log(req.read());
+
+/*
+  let insertVoiceQuery = 'INSERT INTO INTERIM_SPEAKTURN VALUES (' + userId + ', \'' +
+    imageLinks.selectedImage + '\', ' + '\'' + images + '\', null);';
+  DbConnection.runQuery(insertNewSpeakTurnQuery);
+*/
+
+
+
+  res.status(200).end();
+});
+
 module.exports = router;

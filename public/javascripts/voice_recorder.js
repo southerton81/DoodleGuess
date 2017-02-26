@@ -9,7 +9,7 @@ let VoiceRecorder = new class {
         this.recordRTC = null;
     }
 
-    startRecoring() {
+    startRecoring(imageHref) {
         var session = {
             audio: true,
             video: false
@@ -20,7 +20,11 @@ let VoiceRecorder = new class {
 
            this.recordRTC.setRecordingDuration(5 * 1000).onRecordingStopped((url) => {
                console.log(url);
-               this.recordRTC.save('fname.wav');
+               //this.recordRTC.save('fname.wav');
+               let voiceRecord = this.recordRTC.getBlob();
+               var xhttp = new XMLHttpRequest();
+               xhttp.open("POST", "voice", false);
+               xhttp.send(voiceRecord);
            });
 
            this.recordRTC.startRecording();

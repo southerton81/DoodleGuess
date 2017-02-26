@@ -93,7 +93,7 @@ var SpeakTurnGenerator = {
     saveSpeakTurn : function(userId, imageLinks) {
         let images = JSON.stringify(imageLinks.additionalImages);
         let insertNewSpeakTurnQuery = 'REPLACE INTO INTERIM_SPEAKTURN VALUES (' + userId + ', \'' +
-            imageLinks.selectedImage + '\', ' + '\'' + images + '\', null);';
+            imageLinks.selectedImage + '\', ' + '\'' + images + '\', null, null);';
         return DbConnection.runQuery(insertNewSpeakTurnQuery);
     },
 
@@ -105,7 +105,10 @@ var SpeakTurnGenerator = {
                 return SpeakTurnGenerator.saveSpeakTurn(userId, imageLinks);
             })
             .then(rows => {
-                return { turn: TurnId.SPEAK, image: selectedImage}
+                return { turn: TurnId.SPEAK, image: selectedImage }
+            })
+            .catch(error => {
+                return {turn: TurnId.SPEAK, image: null }
             });
     },
 

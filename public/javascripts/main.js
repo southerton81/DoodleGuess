@@ -10,8 +10,10 @@ function showGame() {
     xhttp.open("GET", "dashboard", false);
     xhttp.send();
 
-    if (xhttp.status != 200) 
+    if (xhttp.status != 200) {
+        alert('Error from server: ' + xhttp.status);
         return false;
+    }
 
     var responseObject = JSON.parse(xhttp.response);
     onShowTurn(xhttp.getResponseHeader("userName"), responseObject);
