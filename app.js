@@ -25,10 +25,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(function(req, res, next) {
   if (req.session && req.session.userName) {
-    UserController.findOne(req.session.userName, function(err, user) {
+    UserController.findOne(req.session.userName, function(err, user, userId) {
       if (user) {
         req.user = user;
-        req.session.user = user;
+        req.userId = userId;
+        //req.session.user = user;
       } else {
         req.session.reset();
       }

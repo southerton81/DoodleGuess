@@ -5,18 +5,13 @@ class SpeakTurnForm extends React.Component {
         this.state = {};
     }
 
-    onSpeak(event) {
-        console.log("speak"); 
-        VoiceRecorder.startRecoring(this.props.image);
-    }
-
     render() {
         return React.createElement('div', {},
             React.createElement('img', {src: this.props.image}),
             React.createElement('button', {
                 type: 'button',
                 onClick: (event) => {
-                      VoiceRecorder.startRecoring(this.props.image);
+                      VoiceRecorder.startRecoring();
                 }
             }, "Describe"));
     }

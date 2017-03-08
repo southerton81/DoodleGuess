@@ -7,9 +7,10 @@ let VoiceRecorder = new class {
         }
 
         this.recordRTC = null;
+        this.maxDuration = 5 * 1000;
     }
 
-    startRecoring(imageHref) {
+    startRecoring() {
         var session = {
             audio: true,
             video: false
@@ -18,7 +19,7 @@ let VoiceRecorder = new class {
        navigator.getUserMedia(session, (mediaStream) => {
            this.recordRTC = RecordRTC(mediaStream, { type: 'audio' });
 
-           this.recordRTC.setRecordingDuration(5 * 1000).onRecordingStopped((url) => {
+           this.recordRTC.setRecordingDuration(this.maxDuration).onRecordingStopped((url) => {
                console.log(url);
                //this.recordRTC.save('fname.wav');
                let voiceRecord = this.recordRTC.getBlob();

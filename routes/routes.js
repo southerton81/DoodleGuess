@@ -20,15 +20,15 @@ router.get('/dashboard', function (req, res, next) {
 });
 
 router.post('/voice', function (req, res, next) {
-  console.log(req.read());
+  let soundFile = req.read(); 
 
-/*
-  let insertVoiceQuery = 'INSERT INTO INTERIM_SPEAKTURN VALUES (' + userId + ', \'' +
-    imageLinks.selectedImage + '\', ' + '\'' + images + '\', null);';
-  DbConnection.runQuery(insertNewSpeakTurnQuery);
-*/
-
-
+  DbConnection.runQuery('UPDATE INTERIM_SPEAKTURN SET Voice = ? WHERE UserId = ?', [soundFile, req.userId])
+    .then(rows => {
+      console.log(rows);
+    })
+    .catch(error => {
+      return next(error);
+    });
 
   res.status(200).end();
 });

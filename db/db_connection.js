@@ -30,7 +30,7 @@ DbConnection.runQueryWithCb = function (query, next) {
     });
 }
 
-DbConnection.runQuery = function(query) {
+DbConnection.runQuery = function(...args) {
     return new Promise(function (resolve, reject) {
         pool.getConnection(function (err, connection) {
             if (err) {
@@ -41,7 +41,7 @@ DbConnection.runQuery = function(query) {
                 return reject(err);
             });
 
-            connection.query(query, function (err, rows) {
+            connection.query(...args, function (err, rows) {
                 connection.release();
                 if (!err) {
                     return resolve(rows);

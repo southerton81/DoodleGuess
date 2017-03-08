@@ -41,7 +41,7 @@ UserController.findOne = function (userName, next) {
 
     DbConnection.runQueryWithCb(query, function (err, rows) {
         if (rows != null && rows.length > 0) {
-            return next(err, new User(userName, ''));
+            return next(err, new User(userName, ''), rows[0].UserId);
         }
         return next(new AuthError('No such user'));
     });
