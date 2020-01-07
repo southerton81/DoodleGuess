@@ -1,6 +1,7 @@
-var User = function(name, password) {
-    this.Name = name;
-    this.Password = password;
-};
+var User = function(name, password, id) {
+    this.Name = name
+    this.Password = password
+    this.Id = id
+}
 
-module.exports = User;
+module.exports = User

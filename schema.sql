@@ -19,14 +19,15 @@
 -- Table structure for table `TURN`
 --
 
-DROP TABLE IF EXISTS `TURN`;
+DROP TABLE IF EXISTS `SCORES`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `TURN` (
-  `Turn` tinyint(4) DEFAULT NULL,
+CREATE TABLE `SCORES` (
+  `SpeakScore` int(11) DEFAULT NULL,
+  `ListenScore` int(11) DEFAULT NULL,
   `UserId` int(11) DEFAULT NULL,
   KEY `UserId` (`UserId`),
-  CONSTRAINT `TURN_ibfk_1` FOREIGN KEY (`UserId`) REFERENCES `USER` (`UserId`)
+  CONSTRAINT `SCORES_ibfk_1` FOREIGN KEY (`UserId`) REFERENCES `USER` (`UserId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
