@@ -11,26 +11,7 @@ var pool = mysql.createPool({
     debug: false
 });
 
-DbConnection = {};
-
-DbConnection.runQueryWithCb = function(query, next) {
-    pool.getConnection(function(err, connection) {
-        if (err) {
-            console.log(err)
-            next.apply(this, err)
-        } else {
-            connection.on('error', function(err) {
-                console.log(err)
-                next.apply(this, err)
-            })
-
-            connection.query(query, function(err, rows) {
-                connection.release()
-                next.apply(this, [err, rows])
-            })
-        }
-    })
-}
+DbConnection = {}
 
 DbConnection.runQuery = function(...args) {
     return new Promise(function (resolve, reject) {

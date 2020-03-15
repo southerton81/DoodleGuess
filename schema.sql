@@ -16,18 +16,51 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `TURN`
+-- Table structure for table `DRAWINGS`
+--
+
+
+DROP TABLE IF EXISTS `HISTORY`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `HISTORY` (
+  `HistoryId` int NOT NULL AUTO_INCREMENT,
+  `UserId` int NOT NULL,
+  `DrawingId` int NOT NULL,
+  `Result` int NOT NULL,
+  PRIMARY KEY(`HistoryId`),
+  UNIQUE(`UserId`, `DrawingId`, `Result`),
+  FOREIGN KEY (`UserId`) REFERENCES `USER`(`UserId`),
+  FOREIGN KEY (`DrawingId`) REFERENCES `DRAWINGS`(`DrawingId`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+DROP TABLE IF EXISTS `DRAWINGS`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `DRAWINGS` (
+  `DrawingId` int NOT NULL AUTO_INCREMENT,
+  `Word` varchar(2048) NOT NULL,
+  `Data` MEDIUMTEXT DEFAULT NULL,
+  `UserId` int NOT NULL,
+  PRIMARY KEY(`DrawingId`),
+  FOREIGN KEY (`UserId`) REFERENCES `USER`(`UserId`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `SCORES`
 --
 
 DROP TABLE IF EXISTS `SCORES`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `SCORES` (
-  `SpeakScore` int(11) DEFAULT NULL,
-  `ListenScore` int(11) DEFAULT NULL,
-  `UserId` int(11) DEFAULT NULL,
-  KEY `UserId` (`UserId`),
-  CONSTRAINT `SCORES_ibfk_1` FOREIGN KEY (`UserId`) REFERENCES `USER` (`UserId`)
+  `GuessScore` int DEFAULT NULL,
+  `DrawScore` int DEFAULT NULL,
+  `UserId` int NOT NULL,
+  PRIMARY KEY(`UserId`),
+  FOREIGN KEY (`UserId`) REFERENCES `USER`(`UserId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -39,9 +72,9 @@ DROP TABLE IF EXISTS `USER`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `USER` (
-  `Name` varchar(30) NOT NULL,
-  `Password` varchar(300) DEFAULT NULL,
-  `UserId` int(11) NOT NULL AUTO_INCREMENT,
+  `Name` varchar(2048) NOT NULL,
+  `Password` varchar(2048) DEFAULT NULL,
+  `UserId` int NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`UserId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=80 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;

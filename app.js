@@ -11,17 +11,17 @@ var app = express()
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'))
-app.use(bodyParser.json())
+app.use(bodyParser.json({ limit: 17825792 }))
 app.use(bodyParser.urlencoded({ extended: false }))
 
 app.use(
     session({
         cookieName: 'session',
         secret: 'ytxd76rytff67',
-        duration: 30 * 60 * 1000,
+        duration: 30 * 600 * 1000,
         activeDuration: 5 * 60 * 1000,
     })
-)
+) 
 
 app.use(express.static(path.join(__dirname, 'public')))
 
@@ -29,8 +29,7 @@ app.use(function(req, res, next) {
     if (req.session && req.session.userName) {
         UserController.findUser(req.session.userName, function(
             err,
-            user,
-            userId
+            user
         ) {
             if (user) {
                 req.user = user
@@ -58,7 +57,7 @@ app.use(function(req, res, next) {
 app.use(function(err, req, res, next) {
     res.status(err.status || 500)
     res.end()
-    console.log(err)
+    console.log(err.stack)
 })
 
 app.listen(3015)

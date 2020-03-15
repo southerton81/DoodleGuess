@@ -1,28 +1,3 @@
-class SpeakTurnForm extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {}
-    }
-
-    render() {
-        return React.createElement(
-            'div',
-            {},
-            React.createElement('img', { src: this.props.image }),
-            React.createElement(
-                'button',
-                {
-                    type: 'button',
-                    onClick: event => {
-                        VoiceRecorder.startRecoring()
-                    },
-                },
-                'Describe'
-            )
-        )
-    }
-}
-
 class LoginForm extends React.Component {
     constructor(props) {
         super(props)
@@ -39,15 +14,15 @@ class LoginForm extends React.Component {
             '&' +
             'password=' +
             encodeURIComponent(this.state.password)
-        var xhttp = new XMLHttpRequest()
-        xhttp.open('POST', 'login', false)
-        xhttp.setRequestHeader(
+        var request = new XMLHttpRequest()
+        request.open('POST', 'login', false)
+        request.setRequestHeader(
             'Content-Type',
             'application/x-www-form-urlencoded'
         )
-        xhttp.send(params)
+        request.send(params)
 
-        if (xhttp.status == 200 || xhttp.status == 201) {
+        if (request.status == 200 || request.status == 201) {
             showDashboard()
         }
     }
@@ -91,40 +66,5 @@ class LoginForm extends React.Component {
 
     render() {
         return this.createLoginForm()
-    }
-}
-
-class WelcomeForm extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {}
-    }
-
-    onLogout(event) {
-        var xhttp = new XMLHttpRequest()
-        xhttp.open('POST', 'logout', false)
-        xhttp.send()
-
-        if (xhttp.status == 200) {
-            showLogin()
-        }
-    }
-
-    render() {
-        let element = React.createElement(
-            'p',
-            {},
-            'Hello, ' + this.props.label,
-            React.createElement(
-                'button',
-                {
-                    type: 'button',
-                    onClick: this.onLogout,
-                },
-                'Logout'
-            )
-        )
-
-        return element
     }
 }

@@ -7,6 +7,18 @@ router.get('/', function(req, res, next) {
     res.sendfile('public/index.html')
 })
 
+router.get('/loginpage', function(req, res, next) {
+    res.sendfile('public/index.html')
+})
+
+router.get('/drawpage', function(req, res, next) {
+    res.sendfile('public/index.html')
+})
+
+router.get('/guesspage', function(req, res, next) {
+    res.sendfile('public/index.html')
+})
+
 router.post('/login', function(req, res, next) {
     UserController.login(req, res, next)
 })
@@ -19,21 +31,17 @@ router.get('/score', function(req, res, next) {
     DashboardController.getScore(req, res, next)
 })
 
-router.post('/voice', function(req, res, next) {
-    let soundFile = req.read()
-
-    DbConnection.runQuery(
-        'UPDATE INTERIM_SPEAKTURN SET Voice = ? WHERE UserId = ?',
-        [soundFile, req.userId]
-    )
-        .then(rows => {
-            console.log(rows)
-        })
-        .catch(error => {
-            return next(error)
-        })
-
-    res.status(200).end()
+router.post('/draw', function(req, res, next) {
+    DashboardController.saveDrawing(req, res, next)
 })
+
+router.get('/guess', function(req, res, next) {
+    DashboardController.getDrawing(req, res, next)
+})
+
+router.post('/guess', function(req, res, next) {
+    DashboardController.setGuess(req, res, next)
+})
+
 
 module.exports = router

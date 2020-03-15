@@ -1,54 +1,66 @@
 var User = require('./../models/user.js')
+var Drawing = require('./../models/drawing.js')
 var DbConnection = require('./../db/db_connection.js')
 var mysql = require('mysql')
 var Promise = require('promise')
 var DatabaseError = require('./../error/errors.js').DatabaseError
-var SpeakTurnGenerator = require('./../utils/speak_turn_generator.js')
-var TurnId = require('./../utils/turn_id.js')
-var DefaultUserRepository = require('./../repositories/default_user_repository.js')
+var UserRepository = require('./../repositories/user_repository.js')
 
-function createTurnId(userName) {
-    var userIdQuery =
-        'SELECT UserId FROM USER WHERE Name = ' + mysql.escape(userName)
-
-    let turnId = TurnId.SPEAK
-    let userId
-    return DbConnection.runQuery(userIdQuery)
-        .then(rows => {
-            if (rows.length == 0) {
-                return Promise.reject(new DatabaseError(0, 'User id not found'))
-            }
-
-            userId = rows[0].UserId
-            return 'INSERT INTO TURN VALUES (' + turnId + ', ' + userId + ')'
-        })
-        .then(query => {
-            return DbConnection.runQuery(query)
-        })
-        .then(rows => {
-            return { turnId, userId }
-        })
-}
-
-function getTurnIdFromRow(row) {
-    let turnId = row.Turn
-    let userId = row.UserId
-    return { turnId, userId }
-}
+const userRepository = new UserRepository()
 
 DashboardController = {}
 
-DashboardController.userRepository = function() {
-    return new DefaultUserRepository()
-}
-
-DashboardController.getScore = function(req, res, next) {
-    if (!req.user.Id) {
+DashboardController.saveDrawing = function(req, res, next) {
+    if (!req.user.UserId) {
         res.status(401)
         res.end()
     } else {
-        DashboardController.userRepository()
-            .getUserScore(req.userId)
+        let word = req.body.word
+        let data = req.body.image
+        let drawing = new Drawing(null, req.user.UserId, word, data)
+
+        userRepository
+            .putUserDrawing(drawing)
+            .then(_ => {
+                res.status(201)
+                res.end()
+            })
+            .catch(err => {
+                return next(err)
+            })
+    }
+}
+
+DashboardController.getDrawing = function(req, res, next) {
+    if (!req.user.UserId) {
+        res.status(401)
+        res.end()
+    } else {
+        userRepository
+            .getRandomDrawing(req.user.UserId)
+            .then(drawing => {
+                res.json(drawing)
+                res.status(200)
+                res.end()
+            })
+            .catch(err => {
+                console.log(err)
+                if (err instanceof DatabaseError) {
+                    res.status(404)
+                    res.end()
+                }   
+                return next(err)
+            })
+    }
+}
+
+DashboardController.getScore = function(req, res, next) {
+    if (!req.user.UserId) {
+        res.status(401)
+        res.end()
+    } else {
+        userRepository
+            .getUserScore(req.user.UserId)
             .then(score => {
                 res.status(200)
                 res.json(score) 
@@ -57,6 +69,17 @@ DashboardController.getScore = function(req, res, next) {
             .catch(err => {
                 return next(err)
             })
+    }
+}
+
+DashboardController.setGuess = function(req, res, next) {
+    if (!req.user.UserId) {
+        res.status(401)
+        res.end()
+    } else {
+        userRepository
+            .setGuess(req.user.UserId, req.body.drawingId, req.body.word)
+           
     }
 }
 

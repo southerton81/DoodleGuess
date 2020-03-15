@@ -6,17 +6,17 @@ var pwdhashing = require('./../utils/pwd_hashing.js')
 var HttpError = require('./../error/errors.js').HttpError
 var AuthError = require('./../error/errors.js').AuthError
 var UserNotFoundError = require('./../error/errors.js').UserNotFoundError
-var CustomLoginRepository = require('./../repositories/custom_login_repository.js')
-var DefaultUserRepository = require('./../repositories/default_user_repository.js')
+var LoginRepository = require('./../repositories/login_repository.js')
+var UserRepository = require('./../repositories/user_repository.js')
 
 UserController = {}
 
 UserController.loginRepository = function() {
-    return new CustomLoginRepository()
+    return new LoginRepository()
 }
 
 UserController.userRepository = function() {
-    return new DefaultUserRepository()
+    return new UserRepository()
 }
 
 UserController.findUser = function(userName, next) {

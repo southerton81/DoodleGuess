@@ -17,10 +17,9 @@ function HttpError(status, message) {
 util.inherits(HttpError, Error);
 HttpError.prototype.name = 'HttpError';
 
-function DatabaseError(status, message) {
+function DatabaseError(message) {
     Error.apply(this, arguments);
     Error.captureStackTrace(this, DatabaseError);
-    this.status = status;
     this.message = message;
 }
 util.inherits(DatabaseError, Error);

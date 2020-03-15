@@ -1,7 +1,7 @@
-var User = function(name, password, id) {
+var User = function(userId, name, password) { 
+    this.UserId = userId
     this.Name = name
-    this.Password = password
-    this.Id = id
+    this.Password = password 
 }
 
 module.exports = User
