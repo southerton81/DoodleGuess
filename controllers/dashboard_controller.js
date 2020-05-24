@@ -3,24 +3,39 @@ var Drawing = require('./../models/drawing.js')
 var DbConnection = require('./../db/db_connection.js')
 var mysql = require('mysql')
 var Promise = require('promise')
-var DatabaseError = require('./../error/errors.js').DatabaseError
+var DatabaseError = require('./../error/errors.js').DatabaseError 
 var UserRepository = require('./../repositories/user_repository.js')
 
-const userRepository = new UserRepository()
+const userRepository = new UserRepository() 
 
 DashboardController = {}
+
+DashboardController.createDrawing = function(req, res, next) {
+    if (!req.user.UserId) {
+        res.status(401)
+        res.end()
+    } else {
+        userRepository
+            .createDrawingWithWord(req.user.UserId, 'sun')
+            .then(drawing => {
+                res.status(201).json(drawing).end()
+            })
+            .catch(err => {
+                return next(err)
+            })
+    }
+}
 
 DashboardController.saveDrawing = function(req, res, next) {
     if (!req.user.UserId) {
         res.status(401)
         res.end()
     } else {
-        let word = req.body.word
+        let drawingId = req.body.drawingId
         let data = req.body.image
-        let drawing = new Drawing(null, req.user.UserId, word, data)
 
         userRepository
-            .putUserDrawing(drawing)
+            .putUserDrawing(drawingId, data)
             .then(_ => {
                 res.status(201)
                 res.end()
@@ -82,5 +97,6 @@ DashboardController.setGuess = function(req, res, next) {
            
     }
 }
+
 
 module.exports = DashboardController

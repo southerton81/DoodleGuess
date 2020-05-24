@@ -7,15 +7,15 @@ router.get('/', function(req, res, next) {
     res.sendfile('public/index.html')
 })
 
-router.get('/loginpage', function(req, res, next) {
+router.get('/l', function(req, res, next) {
     res.sendfile('public/index.html')
 })
 
-router.get('/drawpage', function(req, res, next) {
+router.get('/d', function(req, res, next) {
     res.sendfile('public/index.html')
 })
 
-router.get('/guesspage', function(req, res, next) {
+router.get('/g', function(req, res, next) {
     res.sendfile('public/index.html')
 })
 
@@ -41,6 +41,10 @@ router.get('/guess', function(req, res, next) {
 
 router.post('/guess', function(req, res, next) {
     DashboardController.setGuess(req, res, next)
+})
+
+router.post('/createDrawing', function(req, res, next) {
+    DashboardController.createDrawing(req, res, next)
 })
 
 

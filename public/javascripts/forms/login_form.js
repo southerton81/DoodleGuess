@@ -23,7 +23,7 @@ class LoginForm extends React.Component {
         request.send(params)
 
         if (request.status == 200 || request.status == 201) {
-            showDashboard()
+            this.props.history.push('/')
         }
     }
 

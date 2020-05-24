@@ -57,9 +57,37 @@ class UserRepository {
         })
     }
 
-    putUserDrawing(drawing) {
+    createDrawingWithWord(userId, word) {
+        return new Promise((resolve, reject) => {
+            let drawing = new Drawing(null, userId, word, null)
+            var query = 'INSERT INTO DRAWINGS SET ' + mysql.escape(drawing)
+
+            DbConnection.runQuery(query)
+                .then(rows => { 
+
+                    let getDrawingIdQuery = 'SELECT * FROM DRAWINGS WHERE DRAWINGS.UserId = ' +
+                    mysql.escape(userId) + 
+                    ' AND DRAWINGS.Word = \'' + word + '\'' +
+                    ' AND DRAWINGS.Data IS NULL LIMIT 1'
+
+                    return DbConnection.runQuery(getDrawingIdQuery)
+                })
+                .then(rows => {
+                    let drawingId = rows[0].DrawingId
+                    let word = rows[0].Word
+                    return resolve(new Drawing(drawingId, null, word, null))
+                })
+                .catch(err => {
+                    return reject(err)
+                })
+        })
+    }
+
+    putUserDrawing(drawingId, data) {
         return new Promise((resolve, reject) => {
             var query = 'INSERT INTO DRAWINGS SET ' + mysql.escape(drawing)
+            'UPDATE DRAWINGS SET DRAWINGS.Date = ' + data +
+                ' WHERE DRAWINGS.DrawingId = ' + drawingId
 
             DbConnection.runQuery(query)
                 .then(rows => {
@@ -98,7 +126,7 @@ class UserRepository {
                 return Promise.reject(err)
             })
     }
-    
+
     selectAvailableDrawings(userId) {
         let querySelectCurrentDrawing = 'SELECT DrawingId, Data FROM DRAWINGS WHERE ' +
             'DrawingId = (SELECT DrawingId FROM HISTORY WHERE HISTORY.UserId = ' +

@@ -1,8 +1,40 @@
 body {
-  padding: 50px;
+  padding: 110px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
-a {
-  color: #00B7FF;
+@keyframes selectedAnim {
+  50% {
+    transform: scale(1.10);
+ }
+}
+
+li { /* Invisible letter with underscore */
+  display: inline-block;
+  color: transparent;
+  border-bottom: 5px solid #53bdff;
+  margin: 0 10px;
+  font-size: 50px;
+  padding: 10px;
+  transition: 0.5s;
+  text-transform: uppercase;
+  min-width:50px;
+  text-align:center;
+
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+   -khtml-user-select: none; /* Konqueror HTML */
+     -moz-user-select: none; /* Old versions of Firefox */
+      -ms-user-select: none; /* Internet Explorer/Edge */
+          user-select: none; /* Non-prefixed version, currently*/
+
+}
+
+li.selectedLetter { /* Adds border to letter */
+	  border: 5px solid #53bdff;
+    animation: selectedAnim 0.3s ease; 
+}
+
+li.visibleLetter { /* Adds visibility to letter */
+  color: #53bdff;
 }

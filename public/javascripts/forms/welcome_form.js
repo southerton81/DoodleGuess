@@ -2,7 +2,19 @@
 class WelcomeForm extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {}
+        this.state = { loading: true }
+
+        var request = new XMLHttpRequest()
+        request.open("GET", "score", false)
+        request.send()
+
+        if (request.status != 200) {
+            this.props.history.push("/l");
+        } else {
+            var responseObject = JSON.parse(request.response)
+            let userName = request.getResponseHeader("userName")
+            this.setState({ label: userName, loading: false })
+        }
     }
 
     onLogout(event) {
@@ -11,7 +23,7 @@ class WelcomeForm extends React.Component {
         request.send()
 
         if (request.status == 200) {
-            show(LoginForm)
+            this.props.history.push("/l");
         }
     }
 
@@ -19,12 +31,12 @@ class WelcomeForm extends React.Component {
         let element = React.createElement(
             'p',
             {},
-            'Hello, ' + this.props.label,
+            'Hello, ' + this.state.label,
             React.createElement(
                 'button',
                 {
                     type: 'button',
-                    onClick: this.onLogout,
+                    onClick: this.onLogout.bind(this),
                 },
                 'Logout'
             ),
@@ -33,7 +45,7 @@ class WelcomeForm extends React.Component {
                 {
                     type: 'button',
                     onClick: event => {
-                        show(DrawForm)
+                        this.props.history.push("/d");
                     },
                 },
                 'Draw'
@@ -43,7 +55,7 @@ class WelcomeForm extends React.Component {
                 {
                     type: 'button',
                     onClick: event => {
-                        show(GuessForm)
+                        this.props.history.push("/g");
                     },
                 },
                 'Guess'
