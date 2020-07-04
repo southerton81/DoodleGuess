@@ -9,6 +9,9 @@ var UserNotFoundError = require('./../error/errors.js').UserNotFoundError
 var LoginRepository = require('./../repositories/login_repository.js')
 var UserRepository = require('./../repositories/user_repository.js')
 
+/**
+ * Login, logout, find user
+ */
 UserController = {}
 
 UserController.loginRepository = function() {

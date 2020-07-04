@@ -46,15 +46,17 @@ class GuessForm extends React.Component {
 
         if (request.status == 200) {
             const drawing = JSON.parse(request.response)
-
             var ctx = this.refs.canvas.getContext('2d')
             var img = new Image()
-            img.src = drawing.Data
-            this.drawingId = drawing.DrawingId
+            img.src = drawing.data
+            this.drawingId = drawing.drawingId
+            let wordLength = drawing.wordLength
             img.onload = () => {
                 ctx.drawImage(img, 0, 0)
-                this.setState({ ...this.state, lettersCount: 7, currentLetter: 0, 
-                    word: Array(7) })
+                this.setState({ ...this.state, 
+                    lettersCount: wordLength, 
+                    currentLetter: 0, 
+                    word: Array(wordLength) })
             }
         } else {
 
@@ -76,7 +78,14 @@ class GuessForm extends React.Component {
         request.send(params)
 
         if (request.status == 200) {
+            const guessResult = JSON.parse(request.response)
+            if (guessResult.status == 1) {
+                console.log('yes')
+            } else {
+                console.log('no')
+            }
         } else {
+             
         }
     }
 

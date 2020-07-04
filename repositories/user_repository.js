@@ -7,6 +7,9 @@ var mysql = require('mysql')
 var UserNotFoundError = require('../error/errors.js').UserNotFoundError
 var DatabaseError = require('../error/errors.js').DatabaseError
 
+/**
+ * May be devided into UserRepository, DrawingRepository, ScoreRepository
+ */
 class UserRepository {
     constructor() {
         this.resultDrawingGuessIncorrect = 0
@@ -57,14 +60,13 @@ class UserRepository {
         })
     }
 
-    createDrawingWithWord(userId, word) {
+    createEmptyDrawingWithWord(userId, word) {
         return new Promise((resolve, reject) => {
             let drawing = new Drawing(null, userId, word, null)
             var query = 'INSERT INTO DRAWINGS SET ' + mysql.escape(drawing)
 
             DbConnection.runQuery(query)
                 .then(rows => { 
-
                     let getDrawingIdQuery = 'SELECT * FROM DRAWINGS WHERE DRAWINGS.UserId = ' +
                     mysql.escape(userId) + 
                     ' AND DRAWINGS.Word = \'' + word + '\'' +
@@ -85,8 +87,7 @@ class UserRepository {
 
     putUserDrawing(drawingId, data) {
         return new Promise((resolve, reject) => {
-            var query = 'INSERT INTO DRAWINGS SET ' + mysql.escape(drawing)
-            'UPDATE DRAWINGS SET DRAWINGS.Date = ' + data +
+            var query = 'UPDATE DRAWINGS SET DRAWINGS.Data = ' + mysql.escape(data) +
                 ' WHERE DRAWINGS.DrawingId = ' + drawingId
 
             DbConnection.runQuery(query)
@@ -100,13 +101,14 @@ class UserRepository {
     }
 
     getRandomDrawing(userId) {
-        return this.selectAvailableDrawings(userId)
+        return this._selectAvailableDrawings(userId)
             .then(rows => {
                 if (rows != null && rows.length > 0) {
                     let randomRow = Math.round(Math.random() * (rows.length - 1))
                     let drawingId = rows[randomRow].DrawingId
                     let data = rows[randomRow].Data
-                    return new Drawing(drawingId, null, null, data)
+                    let word = rows[randomRow].Word
+                    return new Drawing(drawingId, null, word, data)
                 }
                 return Promise.reject(new DatabaseError("getRandomDrawing: No available drawings found"))
             })
@@ -127,8 +129,28 @@ class UserRepository {
             })
     }
 
-    selectAvailableDrawings(userId) {
-        let querySelectCurrentDrawing = 'SELECT DrawingId, Data FROM DRAWINGS WHERE ' +
+    setGuess(userId, drawingId, guessWord) {
+        return DbConnection.runQuery(this._getCorrectWordQuery(drawingId))
+            .then(rows => {
+                let word = rows[0].Word
+                let isGuessed = guessWord.localeCompare(word) == 0 ? true : false
+                let historyResult = isGuessed ? this.resultDrawingGuessCorrect : this.resultDrawingGuessIncorrect
+                return DbConnection.runQuery(this._updateHistoryWithResultQuery(historyResult, userId, drawingId))
+            })
+            .then(result => {
+                return DbConnection.runQuery(this._getResultFromHistoryQuery(userId, drawingId))
+            })
+            .then(rows => {
+                let result = rows[0].Result
+                return Promise.resolve(result)
+            })
+            .catch(err => {
+                return Promise.reject(err)
+            })
+    }
+
+    _selectAvailableDrawings(userId) {
+        let querySelectCurrentDrawing = 'SELECT DrawingId, Data, Word FROM DRAWINGS WHERE ' +
             'DrawingId = (SELECT DrawingId FROM HISTORY WHERE HISTORY.UserId = ' +
             userId +
             ' AND HISTORY.Result = ' +
@@ -152,27 +174,7 @@ class UserRepository {
             })
     }
 
-    setGuess(userId, drawingId, guessWord) {
-        return DbConnection.runQuery(this.getCorrectWordQuery(drawingId))
-            .then(rows => {
-                let word = rows[0].Word
-                let isGuessed = guessWord.localeCompare(word) == 0 ? true : false
-                let historyResult = isGuessed ? this.resultDrawingGuessCorrect : this.resultDrawingGuessIncorrect
-                return DbConnection.runQuery(this.updateHistoryWithResultQuery(historyResult, userId, drawingId))
-            })
-            .then(result => {
-                return DbConnection.runQuery(this.getResultFromHistoryQuery(userId, drawingId))
-            })
-            .then(rows => {
-                let result = rows[0].Result
-                return Promise.resolve(result == 0 ? false : true)
-            })
-            .catch(err => {
-                return Promise.reject(err)
-            })
-    }
-
-    getResultFromHistoryQuery(userId, drawingId) {
+    _getResultFromHistoryQuery(userId, drawingId) {
         return 'SELECT HISTORY.Result FROM HISTORY WHERE HISTORY.UserId = ' +
             mysql.escape(userId) +
             ' AND HISTORY.DrawingId = ' +
@@ -180,7 +182,7 @@ class UserRepository {
             ' LIMIT 1';
     }
 
-    updateHistoryWithResultQuery(historyResult, userId, drawingId) {
+    _updateHistoryWithResultQuery(historyResult, userId, drawingId) {
         return 'UPDATE HISTORY SET HISTORY.Result = ' +
             historyResult +
             ' WHERE HISTORY.UserId = ' +
@@ -191,7 +193,7 @@ class UserRepository {
             this.resultDrawingSelected;
     }
 
-    getCorrectWordQuery(drawingId) {
+    _getCorrectWordQuery(drawingId) {
         return 'SELECT DRAWINGS.Word FROM DRAWINGS WHERE DRAWINGS.DrawingId = ' +
             drawingId;
     }

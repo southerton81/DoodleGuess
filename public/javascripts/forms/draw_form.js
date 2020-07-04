@@ -42,33 +42,33 @@ class DrawForm extends React.Component {
 
         if (request.status == 201) {
             const drawing = JSON.parse(request.response)
-            this.setState({ wordLabel: drawing.Word })
+            this.setState({ wordLabel: drawing.Word, drawingId: drawing.DrawingId })
         }
-        
     }
 
     onSubmit(event) {
         const canvas = this.refs.canvas
         let dataUrl = canvas.toDataURL()
 
-        var params = JSON.stringify({ word: 'someword', image: dataUrl })
+        var params = JSON.stringify({ drawingId: this.state.drawingId, image: dataUrl }) 
         var request = new XMLHttpRequest()
         request.open('POST', 'draw', false)
         request.setRequestHeader('Content-Type', 'application/json')
         request.send(params)
 
         if (request.status == 201) {
-            showDashboard()
+            this.props.history.push('/')
         }
-    }
+    }       
 
     render() {
         return (
             <div id="draw">
                 <canvas ref="canvas" width="640" height="425"></canvas>
                 <p>{ this.state.wordLabel }</p>
-                <button type="button" onClick={this.onSubmit}>Submit</button> 
+                <button type="button" onClick={this.onSubmit.bind(this)}>Submit</button> 
             </div>
         )
     }
 }
+
