@@ -1,4 +1,5 @@
-var Score = function(guessScore, drawScore) {
+var Score = function(userId, guessScore, drawScore) {
+    this.UserId = userId
     this.GuessScore = guessScore 
     this.DrawScore = drawScore
 }

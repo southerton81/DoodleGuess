@@ -76,7 +76,7 @@ DashboardController.getScore = function (req, res, next) {
 DashboardController.setGuess = function (req, res, next) {
     userRepository.setGuess(req.user.UserId, req.body.drawingId, req.body.word)
         .then(result => {
-            res.status(200)
+            res.status(200) 
             res.json({ result }).end()
         }).catch(err => {
             return next(err)

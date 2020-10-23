@@ -13,7 +13,7 @@ var pool = mysql.createPool({
 
 DbConnection = {}
 
-DbConnection.runQuery = function(...args) {
+DbConnection.runQuery = function (args) {
     return new Promise(function (resolve, reject) {
         pool.getConnection(function (err, connection) {
             if (err) {
@@ -26,7 +26,7 @@ DbConnection.runQuery = function(...args) {
                 return reject(err);
             });
 
-            connection.query(...args, function (err, rows) {
+            connection.query(args, function (err, rows) {
                 connection.release();
                 if (!err) {
                     return resolve(rows);
@@ -37,5 +37,62 @@ DbConnection.runQuery = function(...args) {
         });
     })
 }
+
+DbConnection.runQueriesInTransaction = function (...args) {
+    return new Promise(function (resolve, reject) {
+        pool.getConnection(function (err, connection) {
+            if (err) {
+                console.log(err)
+                return reject(err);
+            }
+
+            connection.on('error', function (err) {
+                console.log(err)
+                return reject(err);
+            });
+
+            connection.beginTransaction(function (err) {
+                if (err) {
+                    connection.release();
+                    return reject(err);
+                }
+
+                let queriesCount = args.length - 1
+                let currentQueryIndex = 0
+
+                function execNextQuery(currentQueryIndex, queriesCount) {
+                    connection.query(args[currentQueryIndex], function (err, rows) {
+                        if (!err && currentQueryIndex == queriesCount) {
+                            connection.commit(function (err) {
+                                if (err) {
+                                    return connection.rollback(function () {
+                                        connection.release();
+                                        return reject(err);
+                                    });
+                                }
+                                connection.release();
+                                return resolve(rows);
+                            })
+                        } else if (err) {
+                            return connection.rollback(function () {
+                                connection.release();
+                                return reject(err);
+                            })
+                        } else {
+                            execNextQuery(++currentQueryIndex, queriesCount)
+                        }
+                    })
+                }
+
+                if (currentQueryIndex <= queriesCount) {
+                    execNextQuery(currentQueryIndex, queriesCount)
+                } else {
+                    return reject(new Error("Empty queries array passed to runQueriesInTransaction() function"));
+                }
+            })
+        })
+    })
+}
+
 
 module.exports = DbConnection;

@@ -7,6 +7,19 @@
 
         <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
 
+        <script>
+        function alert(msg, timeout = 3000) {
+                var alertTitle = document.getElementById("alertTitleId");
+                let alertBar = document.getElementById("alertId");
+                alertBar.style.display = "block";
+                setTimeout(function () {
+                    var alertBar = document.getElementById("alertId");
+                    alertBar.style.display = "none";
+                }, timeout);
+                alertTitle.innerHTML = msg;
+            }
+        </script>
+        
         <script src="react-15.2.1.js"></script>
         <script src="react-dom-15.2.1.js"></script>
         <script src="react-router-dom.min.js"></script>
@@ -23,6 +36,11 @@
     </head>
 
     <body>
+        <div class="alert" id="alertId" style="display:none;">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+            <b id="alertTitleId"> </b>
+        </div>
+
         <div id="app"></div>
     </body>
 </html>

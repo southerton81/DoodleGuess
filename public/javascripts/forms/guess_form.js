@@ -59,7 +59,8 @@ class GuessForm extends React.Component {
                     word: Array(wordLength) })
             }
         } else {
-
+            this.props.history.push("/");
+            alert("Sorry, no more pictures available right now")
         }
     }
 
@@ -69,7 +70,7 @@ class GuessForm extends React.Component {
 
     onSubmitGuess(event) {
         var params = JSON.stringify({
-            word: 'someWord',
+            word: this.state.word.join(""),
             drawingId: this.drawingId,
         })
         var request = new XMLHttpRequest()
@@ -85,7 +86,6 @@ class GuessForm extends React.Component {
                 console.log('no')
             }
         } else {
-             
         }
     }
 

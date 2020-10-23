@@ -66,11 +66,11 @@ class UserRepository {
             var query = 'INSERT INTO DRAWINGS SET ' + mysql.escape(drawing)
 
             DbConnection.runQuery(query)
-                .then(rows => { 
+                .then(rows => {
                     let getDrawingIdQuery = 'SELECT * FROM DRAWINGS WHERE DRAWINGS.UserId = ' +
-                    mysql.escape(userId) + 
-                    ' AND DRAWINGS.Word = \'' + word + '\'' +
-                    ' AND DRAWINGS.Data IS NULL LIMIT 1'
+                        mysql.escape(userId) +
+                        ' AND DRAWINGS.Word = \'' + word + '\'' +
+                        ' AND DRAWINGS.Data IS NULL LIMIT 1'
 
                     return DbConnection.runQuery(getDrawingIdQuery)
                 })
@@ -133,9 +133,17 @@ class UserRepository {
         return DbConnection.runQuery(this._getCorrectWordQuery(drawingId))
             .then(rows => {
                 let word = rows[0].Word
-                let isGuessed = guessWord.localeCompare(word) == 0 ? true : false
+                let isGuessed = guessWord.toLowerCase().localeCompare(word.toLowerCase()) == 0 ? true : false
                 let historyResult = isGuessed ? this.resultDrawingGuessCorrect : this.resultDrawingGuessIncorrect
-                return DbConnection.runQuery(this._updateHistoryWithResultQuery(historyResult, userId, drawingId))
+
+                if (isGuessed) {
+                    return this.incrementScore(userId, drawingId)
+                        .then(result => {
+                            return DbConnection.runQuery(this._updateHistoryWithResultQuery(historyResult, userId, drawingId))
+                        })
+                } else {
+                    return DbConnection.runQuery(this._updateHistoryWithResultQuery(historyResult, userId, drawingId))
+                }
             })
             .then(result => {
                 return DbConnection.runQuery(this._getResultFromHistoryQuery(userId, drawingId))
@@ -149,6 +157,14 @@ class UserRepository {
             })
     }
 
+    incrementScore(userId, drawingId) {
+        return DbConnection.runQueriesInTransaction(
+            this._insertUserIdToScoresQuery(userId),               // Ensure that UserId's already
+            this._insertUserIdByDrawingIdToScoresQuery(drawingId), // exist in a 'Scores' table
+            this._incGuessScoreQuery(userId),
+            this._incDrawScoreQuery(drawingId))
+    }
+
     _selectAvailableDrawings(userId) {
         let querySelectCurrentDrawing = 'SELECT DrawingId, Data, Word FROM DRAWINGS WHERE ' +
             'DrawingId = (SELECT DrawingId FROM HISTORY WHERE HISTORY.UserId = ' +
@@ -158,12 +174,13 @@ class UserRepository {
             ')'
 
         /* Select any other users' drawing that's not already guessed by me */
-        let querySelectNewDrawing = 'SELECT UserId, DrawingId, Data FROM DRAWINGS WHERE ' +
+        let querySelectNewDrawing = 'SELECT UserId, DrawingId, Data, Word FROM DRAWINGS WHERE ' +
             'DrawingId NOT IN (SELECT DrawingId FROM HISTORY WHERE HISTORY.UserId = ' +
             userId +
             ' AND HISTORY.Result != ' +
             this.resultDrawingSelected +
-            ') AND DRAWINGS.UserId != ' + userId;
+            ') AND DRAWINGS.UserId != ' + userId +
+            ' AND DRAWINGS.Data IS NOT NULL';
 
         return DbConnection.runQuery(querySelectCurrentDrawing)
             .then(rows => {
@@ -198,15 +215,25 @@ class UserRepository {
             drawingId;
     }
 
-    /*getCurrentDrawingIdQuery(userId, drawingId) {
-        return 'SELECT HISTORY.DrawingId FROM HISTORY WHERE HISTORY.UserId = ' +
-            mysql.escape(userId) +
-            ' AND HISTORY.DrawingId = ' +
-            mysql.escape(drawingId) +
-            ' AND HISTORY.Result = ' +
-            this.resultDrawingSelected +
-            ' LIMIT 1';
-    }*/
+    _insertUserIdByDrawingIdToScoresQuery(drawingId) {
+        return 'INSERT IGNORE INTO SCORES (UserId) SELECT UserId FROM DRAWINGS WHERE DRAWINGS.DrawingId = ' +
+            drawingId
+    }
+
+    _insertUserIdToScoresQuery(userId) {
+        return 'INSERT IGNORE INTO SCORES (UserId) VALUES(' + userId + ')'
+    }
+
+    _incDrawScoreQuery(drawingId) {
+        return 'UPDATE SCORES SET SCORES.DrawScore = IFNULL(SCORES.DrawScore, 0) + 1' +
+            ' WHERE SCORES.UserId = (SELECT UserId FROM DRAWINGS WHERE DRAWINGS.DrawingId = ' +
+            drawingId + ')'
+    }
+
+    _incGuessScoreQuery(userId) {
+        return 'UPDATE SCORES SET SCORES.GuessScore = IFNULL(SCORES.GuessScore, 0) + 1' +
+            ' WHERE SCORES.UserId = ' + userId;
+    }
 }
 
 module.exports = UserRepository
