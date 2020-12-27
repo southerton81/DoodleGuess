@@ -1,8 +1,7 @@
 class GuessForm extends React.Component {
     constructor(props) {
         super(props)
-        this.state = { lettersCount: -1, currentLetter: -1, word: [] }
-        this.drawingId = null
+        this.state = { lettersCount: -1, currentLetter: -1, word: [], drawingId: null }
         this.onSkip = this.onSkip.bind(this)
         this.onSubmitGuess = this.onSubmitGuess.bind(this)
         this.onKeyDown = this.onKeyDown.bind(this)
@@ -49,29 +48,57 @@ class GuessForm extends React.Component {
             var ctx = this.refs.canvas.getContext('2d')
             var img = new Image()
             img.src = drawing.data
-            this.drawingId = drawing.drawingId
+            let drawingId = drawing.drawingId
             let wordLength = drawing.wordLength
             img.onload = () => {
                 ctx.drawImage(img, 0, 0)
                 this.setState({ ...this.state, 
                     lettersCount: wordLength, 
                     currentLetter: 0, 
-                    word: Array(wordLength) })
+                    word: Array(wordLength),
+                    drawingId: drawingId })
             }
         } else {
-            this.props.history.push("/");
-            alert("Sorry, no more pictures available right now")
+            this.props.history.push('/')
+            alert('Sorry, no more drawings available')
         }
     }
 
     onSkip(event) {
-        this.getDrawing()
+        var params = JSON.stringify({ 
+            drawingId: this.state.drawingId
+        })
+
+        let request = new XMLHttpRequest()
+        request.open('POST', 'skip', false)
+        request.setRequestHeader('Content-Type', 'application/json')
+        request.send(params)
+
+        if (request.status == 200) {
+            const drawing = JSON.parse(request.response)
+            var ctx = this.refs.canvas.getContext('2d')
+            var img = new Image()
+            img.src = drawing.data
+            let drawingId = drawing.drawingId
+            let wordLength = drawing.wordLength
+            img.onload = () => {
+                ctx.drawImage(img, 0, 0)
+                this.setState({ ...this.state, 
+                    lettersCount: wordLength, 
+                    currentLetter: 0, 
+                    word: Array(wordLength),
+                    drawingId: drawingId })
+            }
+        } else {
+            this.props.history.push('/')
+            alert('Sorry, no more drawings available')
+        }
     }
 
     onSubmitGuess(event) {
         var params = JSON.stringify({
-            word: this.state.word.join(""),
-            drawingId: this.drawingId,
+            word: this.state.word.join(''),
+            drawingId: this.state.drawingId
         })
         var request = new XMLHttpRequest()
         request.open('POST', 'guess', false)
@@ -86,6 +113,7 @@ class GuessForm extends React.Component {
                 console.log('no')
             }
         } else {
+             
         }
     }
 
@@ -93,9 +121,9 @@ class GuessForm extends React.Component {
         let letterList = []
         for (let i = 0; i < this.state.lettersCount; i++) {
             let letter = this.state.word[i] || '*'
-            let className = ""
+            let className = "guessletter "
             if (i == this.state.currentLetter) {
-                className = "selectedLetter "
+                className += "borderedletter "
             }
             if (letter !== '*') {
                 className += "visibleLetter "

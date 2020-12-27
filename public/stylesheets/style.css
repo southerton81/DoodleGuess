@@ -1,64 +1,167 @@
-body {
-  padding: 110px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+@font-face {
+    font-family: kirbyFont;
+    src: url(kirbyss.ttf);
 }
 
 @keyframes selectedAnim {
-  50% {
-    transform: scale(1.10);
- }
+    50% {
+        transform: scale(1.1);
+    }
 }
 
-li { /* Invisible letter with underscore */
-  display: inline-block;
-  color: transparent;
-  border-bottom: 5px solid #53bdff;
-  margin: 0 10px;
-  font-size: 50px;
-  padding: 10px;
-  transition: 0.5s;
-  text-transform: uppercase;
-  min-width:50px;
-  text-align:center;
-
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Safari */
-   -khtml-user-select: none; /* Konqueror HTML */
-     -moz-user-select: none; /* Old versions of Firefox */
-      -ms-user-select: none; /* Internet Explorer/Edge */
-          user-select: none; /* Non-prefixed version, currently*/
-
+body {
+    font: 14px 'Lucida Grande', Helvetica, Arial, sans-serif;
 }
 
-li.selectedLetter { /* Adds border to letter */
-	  border: 5px solid #53bdff;
-    animation: selectedAnim 0.3s ease; 
+.guessletter {
+    /* Invisible letter */
+    display: inline-block;
+    color: transparent;
+    border-bottom: 5px solid #1569c7;
+    margin: 0 10px;
+    font-size: 50px;
+    padding: 10px;
+    transition: 0.5s;
+    text-transform: uppercase;
+    min-width: 50px;
+    text-align: center;
+    font-family: kirbyFont;
+
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently*/
 }
 
-li.visibleLetter { /* Adds visibility to letter */
-  color: #53bdff;
+.borderedletter {
+    /* Adds border to letter */
+    border: 5px solid #1569c7;
+    animation: selectedAnim 0.3s ease;
+}
+
+.visibleLetter {
+    /* Adds visibility to letter */
+    color: #1569c7;
 }
 
 /* The alert message box */
 .alert {
-  padding: 20px;
-  background-color: #FFC300;  
-  color: white;
-  margin-bottom: 15px;
+    padding: 20px;
+    background-color: #1569c7;
+    color: white;
+    margin-bottom: 15px;
+    font-family: kirbyFont;
 }
 
 /* The close button */
 .closebtn {
-  margin-left: 15px;
-  color: white;
-  font-weight: bold;
-  float: right;
-  font-size: 22px;
-  line-height: 20px;
-  cursor: pointer;
-  transition: 0.3s;
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-family: kirbyFont;
 }
 /* When moving the mouse over the close button */
 .closebtn:hover {
-  color: black;
+    color: 1569c7;
+}
+
+canvas {
+  border: 3px solid #1569c7;
+}
+
+input {
+  background-color: white;
+  display: inline-block;
+  width: 200px;
+  height: 50px;
+  line-height: 40px;
+  font-size: 18px;
+  text-decoration: none;
+  color: #1569c7;
+  border: 3px solid #1569c7;
+  letter-spacing: 2px;
+  text-align: center;
+  position: relative;
+  transition: all 0.3s;
+  padding: 0;
+  background: white;
+  margin: 10px;
+  outline: none;
+  font-family: kirbyFont;
+}
+
+button {
+    display: inline-block;
+    width: 200px;
+    height: 50px;
+    line-height: 40px;
+    font-size: 18px;
+    text-decoration: none;
+    color: #1569c7;
+    border: 3px solid #1569c7;
+    letter-spacing: 2px;
+    text-align: center;
+    position: relative;
+    transition: all 0.3s;
+    padding: 0;
+    background: white;
+    margin: 10px;
+    outline: none;
+    font-family: kirbyFont;
+}
+
+button:active {
+    background: white;
+    box-shadow: 0px 2px 4px 2px #1569c7;
+}
+
+button span {
+    position: relative;
+    z-index: 2;
+}
+
+button:after {
+    position: absolute;
+    content: '';
+    color:white;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background: #1569c7;
+    transition: all 0.35s;
+}
+
+button:hover {
+    color:white;
+}
+
+button:hover:after {
+    width: 100%;
+}
+
+button:focus {
+  color:#fff
+}
+
+button:focus:after{
+  width: 100% ;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active  {
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+}
+
+input:-webkit-autofill {
+  -webkit-text-fill-color: #1569c7 !important;
 }

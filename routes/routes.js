@@ -32,6 +32,11 @@ router.get('/score', function (req, res, next) {
         DashboardController.getScore(req, res, next)
 })
 
+router.get('/scores', function (req, res, next) {
+    if (checkUserId(req))
+        DashboardController.getHighscores(req, res, next)
+})
+
 router.get('/guess', function (req, res, next) {
     DashboardController.getDrawing(req, res, next)
 })
@@ -39,6 +44,10 @@ router.get('/guess', function (req, res, next) {
 router.post('/guess', function (req, res, next) {
     if (checkUserId(req))
         DashboardController.setGuess(req, res, next)
+})
+
+router.post('/skip', function (req, res, next) {
+    DashboardController.skipDrawing(req, res, next)
 })
 
 /**

@@ -2,18 +2,16 @@ class LoginForm extends React.Component {
     constructor(props) {
         super(props)
         this.state = {}
-        this.onLogin = this.onLogin.bind(this)
         this.onNameChange = this.onNameChange.bind(this)
-        this.onPasswordChange = this.onPasswordChange.bind(this)
     }
 
     onLogin(event) {
-        var params =
-            'name=' +
-            encodeURIComponent(this.state.name) +
-            '&' +
-            'password=' +
-            encodeURIComponent(this.state.password)
+        if (!this.state.name) {
+            alert('Wrong name')
+            return
+        }
+
+        var params ='name=' + encodeURIComponent(this.state.name) 
         var request = new XMLHttpRequest()
         request.open('POST', 'login', false)
         request.setRequestHeader(
@@ -24,6 +22,10 @@ class LoginForm extends React.Component {
 
         if (request.status == 200 || request.status == 201) {
             this.props.history.push('/')
+        } else if (request.status == 401) {
+            alert('Nickname already taken')
+        } else {
+            alert('Error occurred')
         }
     }
 
@@ -33,38 +35,14 @@ class LoginForm extends React.Component {
         })
     }
 
-    onPasswordChange(v) {
-        this.setState({
-            password: v.target.value,
-        })
-    }
-
-    createLoginForm() {
-        return React.createElement(
-            'form',
-            null,
-            React.createElement('input', {
-                type: 'name',
-                placeholder: 'Name or email',
-                onChange: this.onNameChange,
-            }),
-            React.createElement('input', {
-                type: 'password',
-                placeholder: 'password',
-                onChange: this.onPasswordChange,
-            }),
-            React.createElement(
-                'button',
-                {
-                    type: 'button',
-                    onClick: this.onLogin,
-                },
-                'Login'
-            )
-        )
-    }
-
     render() {
-        return this.createLoginForm()
+        return (
+            <div>
+                <form>
+                    <input type="text" spellCheck="false" placeholder="nick" onChange={this.onNameChange}/> 
+                    <button type="button" onClick={() => this.onLogin()}><span>LOGIN</span></button>
+                </form>
+            </div>
+        )
     }
 }

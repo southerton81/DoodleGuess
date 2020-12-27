@@ -9,7 +9,7 @@ class LoginRepository {
     login(userName, userPassword) {
         return new Promise((resolve, reject) => {
             var query =
-                'SELECT * FROM USER WHERE Name = ' + mysql.escape(userName)
+             'SELECT * FROM USER WHERE Name = ' + mysql.escape(userName)
             DbConnection.runQuery(query)
                 .then(rows => {
                     if (rows != null && rows.length > 0) {

@@ -73,6 +73,19 @@ DashboardController.getScore = function (req, res, next) {
         })
 }
 
+DashboardController.getHighscores = function (req, res, next) {
+    userRepository
+        .getHighscores()
+        .then(scores => {
+            res.status(200)
+            res.json(scores)
+            res.end()
+        })
+        .catch(err => {
+            return next(err)
+        })
+}
+
 DashboardController.setGuess = function (req, res, next) {
     userRepository.setGuess(req.user.UserId, req.body.drawingId, req.body.word)
         .then(result => {
@@ -83,5 +96,13 @@ DashboardController.setGuess = function (req, res, next) {
         })
 }
 
+DashboardController.skipDrawing = function (req, res, next) {
+    userRepository.skipDrawing(req.user.UserId, req.body.drawingId)
+        .then(result => {
+            return DashboardController.getDrawing(req, res, next)
+        }).catch(err => {
+            return next(err)
+        })
+}
 
 module.exports = DashboardController

@@ -1,9 +1,10 @@
-
 class WelcomeForm extends React.Component {
     constructor(props) {
         super(props)
-        this.state = { loading: true }
+        this.state = { label: '', loading: true }
+    }
 
+    componentDidMount() {
         var request = new XMLHttpRequest()
         request.open("GET", "score", false)
         request.send()
@@ -12,7 +13,7 @@ class WelcomeForm extends React.Component {
             this.props.history.push("/l");
         } else {
             var responseObject = JSON.parse(request.response)
-            let userName = request.getResponseHeader("userName")
+            let userName = responseObject.UserName
             this.setState({ label: userName, loading: false })
         }
     }
@@ -28,40 +29,14 @@ class WelcomeForm extends React.Component {
     }
 
     render() {
-        let element = React.createElement(
-            'p',
-            {},
-            'Hello, ' + this.state.label,
-            React.createElement(
-                'button',
-                {
-                    type: 'button',
-                    onClick: this.onLogout.bind(this),
-                },
-                'Logout'
-            ),
-            React.createElement(
-                'button',
-                {
-                    type: 'button',
-                    onClick: event => {
-                        this.props.history.push("/d");
-                    },
-                },
-                'Draw'
-            ),
-            React.createElement(
-                'button',
-                {
-                    type: 'button',
-                    onClick: event => {
-                        this.props.history.push("/g");
-                    },
-                },
-                'Guess'
-            )
+        return (
+            <div id="welcome">                                          
+                <p>{'Hello ' + this.state.label}</p>
+                <button type="button" onClick={() => this.props.history.push("/d")}><span>DRAW</span></button>
+                <button type="button" onClick={() => this.props.history.push("/g")}><span>GUESS</span></button>
+                <button type="button" onClick={() => this.onLogout()}><span>LOGOUT</span></button>
+                <HighscoresForm/>
+            </div>
         )
-
-        return element
     }
 }

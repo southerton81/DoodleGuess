@@ -85,7 +85,7 @@ class PerlinPen {
                 )
 
                 ctx.lineJoin = ctx.lineCap = 'round'
-                ctx.strokeStyle = 'rgba(0, 15, 85, 255)'
+                ctx.strokeStyle = '#1569c7'
                 ctx.beginPath()
                 ctx.moveTo(p0.x, p0.y)
                 ctx.lineWidth = segmentPoints[i].width

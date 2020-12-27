@@ -8,7 +8,7 @@ var UserNotFoundError = require('../error/errors.js').UserNotFoundError
 var DatabaseError = require('../error/errors.js').DatabaseError
 
 /**
- * May be devided into UserRepository, DrawingRepository, ScoreRepository
+ * May be divided into UserRepository, DrawingRepository, ScoreRepository
  */
 class UserRepository {
     constructor() {
@@ -41,18 +41,46 @@ class UserRepository {
     getUserScore(userId) {
         return new Promise((resolve, reject) => {
             var query =
-                'SELECT * FROM SCORES WHERE SCORES.UserId = ' +
-                mysql.escape(userId) +
+                'SELECT USER.Name, SCORES.GuessScore, SCORES.DrawScore ' +  
+                'FROM USER LEFT JOIN SCORES ON USER.UserId = SCORES.UserId ' + 
+                'WHERE USER.UserId = ' + mysql.escape(userId) +
                 ' LIMIT 1'
             DbConnection.runQuery(query)
                 .then(rows => {
                     if (rows != null && rows.length > 0) {
+                        let userName = rows[0].Name || ""
                         let guessScore = rows[0].GuessScore || 0
                         let drawScore = rows[0].DrawScore || 0
-                        return resolve(new Score(guessScore, drawScore))
+                        return resolve(new Score(userName, guessScore, drawScore))
                     }
 
-                    return resolve(new Score(0, 0))
+                    return resolve(new Score("", 0, 0))
+                })
+                .catch(err => {
+                    return reject(err)
+                })
+        })
+    }
+
+    getHighscores() {
+        return new Promise((resolve, reject) => {
+            var query =
+                'SELECT USER.Name, ifnull(SCORES.GuessScore, 0) + ifnull(SCORES.DrawScore, 0) as TotalScore ' +  
+                'FROM USER LEFT JOIN SCORES ON USER.UserId = SCORES.UserId ORDER BY TotalScore' +
+                ' LIMIT 1024'
+            DbConnection.runQuery(query)
+                .then(rows => {
+                    let scores = []
+                    if (rows != null) {
+                        rows.map(row => {
+                            let userName = row.Name || ""
+                            let guessScore = row.GuessScore || 0
+                            let drawScore = row.DrawScore || 0
+                            scores.push(new Score(userName, guessScore, drawScore))
+                        }) 
+                    }
+
+                    return resolve(scores)
                 })
                 .catch(err => {
                     return reject(err)
@@ -157,6 +185,13 @@ class UserRepository {
             })
     }
 
+    skipDrawing(userId, drawingId) {
+        return DbConnection.runQuery(this._updateHistoryWithResultQuery(this.resultDrawingSkipped, userId, drawingId))
+             .then(result => {
+                return DbConnection.runQuery(this._getResultFromHistoryQuery(userId, drawingId))
+            })
+    }
+
     incrementScore(userId, drawingId) {
         return DbConnection.runQueriesInTransaction(
             this._insertUserIdToScoresQuery(userId),               // Ensure that UserId's already
@@ -173,14 +208,10 @@ class UserRepository {
             this.resultDrawingSelected +
             ')'
 
-        /* Select any other users' drawing that's not already guessed by me */
+        /* Select any other users' drawing that's wasn't interacted by me */
         let querySelectNewDrawing = 'SELECT UserId, DrawingId, Data, Word FROM DRAWINGS WHERE ' +
             'DrawingId NOT IN (SELECT DrawingId FROM HISTORY WHERE HISTORY.UserId = ' +
-            userId +
-            ' AND HISTORY.Result != ' +
-            this.resultDrawingSelected +
-            ') AND DRAWINGS.UserId != ' + userId +
-            ' AND DRAWINGS.Data IS NOT NULL';
+            userId + ') AND DRAWINGS.UserId != ' + userId + ' AND DRAWINGS.Data IS NOT NULL';
 
         return DbConnection.runQuery(querySelectCurrentDrawing)
             .then(rows => {

@@ -35,7 +35,7 @@ UserController.findUser = function(userName, next) {
 
 UserController.login = function(req, res, next) {
     var name = req.body.name
-    var password = req.body.password
+    var password = req.cookies.guessDrawCookie
 
     UserController.loginRepository()
         .login(name, password)
@@ -72,6 +72,7 @@ UserController.logout = function(req, res, next) {
     if (req.session) {
         req.session.destroy()
     }
+
     res.status(200)
     res.end()
 }
