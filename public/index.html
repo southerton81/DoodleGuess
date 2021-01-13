@@ -8,13 +8,13 @@
         <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
 
         <script>
-        function alert(msg, timeout = 3000) {
+            function alert(msg, timeout = 3000) {
                 var alertTitle = document.getElementById("alertTitleId");
                 let alertBar = document.getElementById("alertId");
-                alertBar.style.display = "block";
+                alertBar.style.visibility = "visible";
                 setTimeout(function () {
                     var alertBar = document.getElementById("alertId");
-                    alertBar.style.display = "none";
+                    alertBar.style.visibility = "hidden";
                 }, timeout);
                 alertTitle.innerHTML = msg;
             }
@@ -37,9 +37,9 @@
     </head>
 
     <body>
-        <div class="alert" id="alertId" style="display:none;">
-            <span class="closebtn" onclick="this.parentElement.style.display='none';">x</span> 
-            <b id="alertTitleId"> </b>
+        <div class="alert" id="alertId" style="visibility: hidden;">
+            <span class="closebtn" onclick="this.parentElement.style.visibility='hidden';">x</span> 
+            <b id="alertTitleId">Message</b>
         </div>
 
         <div id="app"></div>

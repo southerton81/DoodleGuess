@@ -32,9 +32,9 @@ class WelcomeForm extends React.Component {
         return (
             <div id="welcome">                                          
                 <p>{'Hello ' + this.state.label}</p>
-                <button type="button" onClick={() => this.props.history.push("/d")}><span>DRAW</span></button>
-                <button type="button" onClick={() => this.props.history.push("/g")}><span>GUESS</span></button>
-                <button type="button" onClick={() => this.onLogout()}><span>LOGOUT</span></button>
+                <button type="button" className="sketch1" onClick={() => this.props.history.push("/d")}><span>DRAW</span></button>
+                <button type="button" className="sketch2" onClick={() => this.props.history.push("/g")}><span>GUESS</span></button>
+                <button type="button" className="sketch3" onClick={() => this.onLogout()}><span>LOGOUT</span></button>
                 <HighscoresForm/>
             </div>
         )

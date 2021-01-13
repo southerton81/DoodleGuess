@@ -44,24 +44,31 @@ class GuessForm extends React.Component {
         request.send()
 
         if (request.status == 200) {
-            const drawing = JSON.parse(request.response)
-            var ctx = this.refs.canvas.getContext('2d')
-            var img = new Image()
-            img.src = drawing.data
-            let drawingId = drawing.drawingId
-            let wordLength = drawing.wordLength
-            img.onload = () => {
-                ctx.drawImage(img, 0, 0)
-                this.setState({ ...this.state, 
-                    lettersCount: wordLength, 
-                    currentLetter: 0, 
-                    word: Array(wordLength),
-                    drawingId: drawingId })
-            }
+            this.showDrawing(request);
         } else {
             this.props.history.push('/')
             alert('Sorry, no more drawings available')
         }
+    }
+
+    showDrawing(request) {
+        const drawing = JSON.parse(request.response);
+        var ctx = this.refs.canvas.getContext('2d');
+        var img = new Image();
+        img.src = drawing.data;
+        let drawingId = drawing.drawingId;
+        let wordLength = drawing.wordLength;
+        img.onload = () => {
+            ctx.clearRect(0, 0, this.refs.canvas.width, this.refs.canvas.height);
+            ctx.drawImage(img, 0, 0);
+            this.setState({
+            ...this.state,
+                lettersCount: wordLength,
+                currentLetter: 0,
+                word: Array(wordLength),
+                drawingId: drawingId
+            });
+        };
     }
 
     onSkip(event) {
@@ -75,20 +82,7 @@ class GuessForm extends React.Component {
         request.send(params)
 
         if (request.status == 200) {
-            const drawing = JSON.parse(request.response)
-            var ctx = this.refs.canvas.getContext('2d')
-            var img = new Image()
-            img.src = drawing.data
-            let drawingId = drawing.drawingId
-            let wordLength = drawing.wordLength
-            img.onload = () => {
-                ctx.drawImage(img, 0, 0)
-                this.setState({ ...this.state, 
-                    lettersCount: wordLength, 
-                    currentLetter: 0, 
-                    word: Array(wordLength),
-                    drawingId: drawingId })
-            }
+            this.showDrawing(request)
         } else {
             this.props.history.push('/')
             alert('Sorry, no more drawings available')
@@ -136,8 +130,8 @@ class GuessForm extends React.Component {
             <div id="guess">
                 <canvas ref="canvas" width="640" height="425"></canvas>
                 <ul>{letterList}</ul>
-                <button type="button" onClick={this.onSkip}>Skip</button>
-                <button type="button" onClick={this.onSubmitGuess}>Guess</button>
+                <button type="button" className="sketch3" onClick={this.onSkip}>Skip</button>
+                <button type="button" className="sketch1" onClick={this.onSubmitGuess}>Guess</button>
             </div>
         )
         return element

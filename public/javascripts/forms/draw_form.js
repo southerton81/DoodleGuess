@@ -2,38 +2,11 @@
 class DrawForm extends React.Component {
     constructor(props) {
         super(props)
-        this.state = { wordLabel: '' }
+        this.state = { wordLabel: '', inkLeft: 100 }
     }
 
     componentDidMount() {
-        const canvas = this.refs.canvas
-        const ctx = canvas.getContext('2d')
-        const perlinPen = new PerlinPen()
-        let isDrawing
-
-        canvas.onmousedown = function(e) {
-            isDrawing = true
-            let x = e.clientX - canvas.offsetLeft
-            let y = e.clientY - canvas.offsetTop
-            perlinPen.startNewSegment(x, y)    
-        }
-
-        canvas.onmousemove = function(e) {
-            if (isDrawing) {
-                let x = e.clientX - canvas.offsetLeft
-                let y = e.clientY - canvas.offsetTop
-                perlinPen.addPointToSegment(x, y)
-                perlinPen.draw(ctx)
-            }
-        }
-
-        canvas.onmouseup = function() {
-            isDrawing = false
-        }
-
-        canvas.onmouseout = function() {
-            isDrawing = false
-        }
+        this.initPen()
 
         var request = new XMLHttpRequest()
         request.open('POST', 'createDrawing', false)
@@ -46,11 +19,68 @@ class DrawForm extends React.Component {
         }
     }
 
+    initPen() {
+        const canvas = this.refs.canvas
+        const ctx = canvas.getContext('2d')
+        const inkProgress = this.refs.inkProgress
+        this.setState({ ...this.state, inkLeft: 100 })
+        const perlinPen = new PerlinPen()
+        let isDrawing
+        let drawForm = this
+
+        canvas.onmousedown = function (e) {
+            isDrawing = true
+            let pos = this.getMousePosition(this, e)
+            //let x = e.clientX - canvas.offsetLeft
+            //let y = e.clientY - canvas.offsetTop
+            perlinPen.startNewSegment(pos[0], pos[1])
+        }
+
+        canvas.onmousemove = function (e) {
+            if (isDrawing) {
+                //let x = e.clientX - canvas.offsetLeft
+                //let y = e.clientY - canvas.offsetTop
+                let pos = this.getMousePosition(this, e)
+                perlinPen.addPointToSegment(pos[0], pos[1])
+                let inkUsed = perlinPen.draw(ctx)
+                drawForm.setState({ ...this.state, inkLeft: 100 - (inkUsed * 100) })
+            }
+        }
+
+        canvas.onmouseup = function () {
+            isDrawing = false
+        }
+
+        canvas.onmouseout = function () {
+            isDrawing = false
+        }
+
+    canvas.getMousePosition = function(canvas, event) {
+        let x = 0
+        let y = 0
+
+        if (event.pageX != undefined && event.pageY != undefined) {
+           x = event.pageX;
+           y = event.pageY;
+        } else  {
+           x = event.clientX + document.body.scrollLeft
+                   + document.documentElement.scrollLeft
+           y = event.clientY + document.body.scrollTop
+                   + document.documentElement.scrollTop
+        }
+       
+        x -= canvas.offsetLeft
+        y -= canvas.offsetTop
+
+        return [x, y]
+    }
+    }
+
     onSubmit(event) {
         const canvas = this.refs.canvas
         let dataUrl = canvas.toDataURL()
 
-        var params = JSON.stringify({ drawingId: this.state.drawingId, image: dataUrl }) 
+        var params = JSON.stringify({ drawingId: this.state.drawingId, image: dataUrl })
         var request = new XMLHttpRequest()
         request.open('POST', 'draw', false)
         request.setRequestHeader('Content-Type', 'application/json')
@@ -59,14 +89,40 @@ class DrawForm extends React.Component {
         if (request.status == 201) {
             this.props.history.push('/')
         }
-    }       
+    }
+
+    onClear(event) {
+        var ctx = this.refs.canvas.getContext('2d')
+        ctx.clearRect(0, 0, this.refs.canvas.width, this.refs.canvas.height);
+        this.initPen()
+    }
 
     render() {
+        const inkProgressStyle = {
+            width: this.state.inkLeft + '%'
+        }
         return (
             <div id="draw">
-                <canvas ref="canvas" width="640" height="425"></canvas>
-                <p>{ this.state.wordLabel }</p>
-                <button type="button" onClick={this.onSubmit.bind(this)}>Submit</button> 
+                <div className="centeredcontainer drawWord">{this.state.wordLabel}</div>
+                <p />
+
+                <canvas ref="canvas" width="330" height="420"></canvas>
+                <p />
+
+                <div className="centeredcontainer">
+                    <div id="inkContainer" className="centeredchild">
+                        <div id="inkProgress" ref="inkProgress" style={inkProgressStyle}>
+                            <div></div>
+                        </div>
+                    </div>
+                </div>
+                <p />
+
+                <div className="centeredcontainer">
+                    <button type="button" className="sketch2 centeredchild" onClick={this.onClear.bind(this)}><span>CLEAR</span></button>
+                    <button type="button" className="sketch1 centeredchild" onClick={this.onSubmit.bind(this)}><span>SUBMIT</span></button>
+                </div>
+
             </div>
         )
     }

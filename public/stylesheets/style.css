@@ -10,7 +10,7 @@
 }
 
 body {
-    font: 14px 'Lucida Grande', Helvetica, Arial, sans-serif;
+    font-family: kirbyFont;
 }
 
 .guessletter {
@@ -48,10 +48,10 @@ body {
 
 /* The alert message box */
 .alert {
-    padding: 20px;
+    padding: 10px;
     background-color: #1569c7;
     color: white;
-    margin-bottom: 15px;
+    margin-bottom: 5px;
     font-family: kirbyFont;
 }
 
@@ -73,31 +73,18 @@ body {
 }
 
 canvas {
-  border: 3px solid #1569c7;
+    display: block;
+    margin-left: auto;
+    margin-right: auto; 
+    border: 3px solid #1569c7;
+    border-top-left-radius: 105px 15px;
+    border-top-right-radius: 15px 25px;
+    border-bottom-right-radius: 25px 195px;
+    border-bottom-left-radius: 12px 55px;
 }
 
 input {
-  background-color: white;
-  display: inline-block;
-  width: 200px;
-  height: 50px;
-  line-height: 40px;
-  font-size: 18px;
-  text-decoration: none;
-  color: #1569c7;
-  border: 3px solid #1569c7;
-  letter-spacing: 2px;
-  text-align: center;
-  position: relative;
-  transition: all 0.3s;
-  padding: 0;
-  background: white;
-  margin: 10px;
-  outline: none;
-  font-family: kirbyFont;
-}
-
-button {
+    background-color: white;
     display: inline-block;
     width: 200px;
     height: 50px;
@@ -117,9 +104,30 @@ button {
     font-family: kirbyFont;
 }
 
+button {
+    display: inline-block;
+    width: 145px;
+    height: 50px;
+    line-height: 40px;
+    font-size: 18px;
+    text-decoration: none;
+    color: #1569c7;
+    border: 3px solid #1569c7;
+    letter-spacing: 2px;
+    text-align: center;
+    position: relative;
+    transition: all 0.3s;
+    padding: 0;
+    background: white;
+    margin: 10px;
+    outline: none;
+    font-family: kirbyFont;
+}
+
 button:active {
     background: white;
-    box-shadow: 0px 2px 4px 2px #1569c7;
+    outline-offset: 5px;
+    outline: 5px solid #1569c7;
 }
 
 button span {
@@ -130,7 +138,7 @@ button span {
 button:after {
     position: absolute;
     content: '';
-    color:white;
+    color: white;
     top: 0;
     left: 0;
     width: 0;
@@ -139,29 +147,105 @@ button:after {
     transition: all 0.35s;
 }
 
+button:active {
+    background: #e5e5e5;
+    -webkit-box-shadow: inset 0px 0px 5px #c1c1c1;
+    -moz-box-shadow: inset 0px 0px 5px #c1c1c1;
+    box-shadow: inset 0px 0px 5px #c1c1c1;
+    outline: none;
+}
+
 button:hover {
-    color:white;
+    box-shadow: 2px 9px 4px -6px hsla(0, 0%, 0%, 0.35);
 }
 
-button:hover:after {
+button.sketch1 {
+    border-top-left-radius: 85px 15px;
+    border-top-right-radius: 15px 80px;
+    border-bottom-right-radius: 12px 105px;
+    border-bottom-left-radius: 30px 135px;
+}
+
+button.sketch2 {
+    border-top-left-radius: 205px 10px;
+    border-top-right-radius: 15px 25px;
+    border-bottom-right-radius: 225px 15px;
+    border-bottom-left-radius: 12px 105px;
+}
+
+button.sketch3 {
+    border-top-left-radius: 205px 10px;
+    border-top-right-radius: 15px 25px;
+    border-bottom-right-radius: 25px 15px;
+    border-bottom-left-radius: 12px 55px;
+}
+
+button.sketch4 {
+    border-top-left-radius: 105px 15px;
+    border-top-right-radius: 15px 25px;
+    border-bottom-right-radius: 25px 195px;
+    border-bottom-left-radius: 12px 55px;
+}
+
+input.sketch1 {
+    border-top-left-radius: 105px 15px;
+    border-top-right-radius: 15px 25px;
+    border-bottom-right-radius: 25px 195px;
+    border-bottom-left-radius: 12px 55px;
+}
+
+#inkContainer {
+    width: 140px;
+    height: 10px;
+    border: 4px solid #1569c7;
+    overflow: hidden;
+    position: relative;
+
+    border-top-left-radius: 105px 125px;
+    border-top-right-radius: 75px 125px;
+    border-bottom-right-radius: 89px 125px;
+    border-bottom-left-radius: 105px 155px;
+}
+
+#inkProgress,
+#inkProgress div {
     width: 100%;
+    overflow: hidden;
+    position: absolute;
 }
 
-button:focus {
-  color:#fff
-}
-
-button:focus:after{
-  width: 100% ;
+#inkProgress {
+    border: 1px solid #1569c7;
+    border-top-width: 0;
+    background-color: #1569c7;
+    bottom: 0;
+    height: 100%;
 }
 
 input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus, 
-input:-webkit-autofill:active  {
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
     -webkit-box-shadow: 0 0 0 30px white inset !important;
 }
 
 input:-webkit-autofill {
-  -webkit-text-fill-color: #1569c7 !important;
+    -webkit-text-fill-color: #1569c7 !important;
+}
+
+.centeredcontainer {
+    text-align: center;
+    position: relative;
+}
+
+.centeredchild {
+    position: relative;
+    margin: 10px 10px;
+    display: inline-block;
+}
+
+.drawWord {
+    /* Adds visibility to letter */
+    color: #1569c7;
+    font-size: 40px;
 }

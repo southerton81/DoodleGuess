@@ -5,7 +5,7 @@ class PerlinPen {
         this.points = []
         this.perlinGrad = []
         this.perlinGradMax = 10
-        this.maxDistance = 1000
+        this.maxDistance = 1500
         this.opaqueDistance = 300
         this.perlinToDistanceFactor = this.maxDistance / this.perlinGradMax
         this.basicWidth = 2
@@ -86,6 +86,8 @@ class PerlinPen {
 
                 ctx.lineJoin = ctx.lineCap = 'round'
                 ctx.strokeStyle = '#1569c7'
+                ctx.shadowColor='#1569c7';
+                ctx.shadowBlur=3;
                 ctx.beginPath()
                 ctx.moveTo(p0.x, p0.y)
                 ctx.lineWidth = segmentPoints[i].width
@@ -93,6 +95,7 @@ class PerlinPen {
                 ctx.stroke()
             }
         }
+        return Math.min(1, Math.max(0, distance / this.maxDistance))
     }
 
 
