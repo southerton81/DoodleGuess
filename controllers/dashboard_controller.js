@@ -86,6 +86,19 @@ DashboardController.getHighscores = function (req, res, next) {
         })
 }
 
+DashboardController.getHint = function (req, res, next) {
+    userRepository
+        .getHint(req.user.UserId, req.query.drawingId)
+        .then(hint => {
+            res.status(200)
+            res.json(hint)
+            res.end()
+        })
+        .catch(err => {
+            return next(err)
+        })
+}
+
 DashboardController.setGuess = function (req, res, next) {
     userRepository.setGuess(req.user.UserId, req.body.drawingId, req.body.word)
         .then(result => {

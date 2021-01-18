@@ -19,6 +19,14 @@ router.get('/g', function (req, res, next) {
     res.sendfile('public/index.html')
 })
 
+router.get('/h', function (req, res, next) {
+    res.sendfile('public/index.html')
+})
+
+router.get('/r', function (req, res, next) {
+    res.sendfile('public/index.html')
+})
+
 router.post('/login', function (req, res, next) {
     UserController.login(req, res, next)
 })
@@ -39,6 +47,11 @@ router.get('/scores', function (req, res, next) {
 
 router.get('/guess', function (req, res, next) {
     DashboardController.getDrawing(req, res, next)
+})
+
+router.get('/hint', function (req, res, next) {
+    if (checkUserId(req))
+        DashboardController.getHint(req, res, next)
 })
 
 router.post('/guess', function (req, res, next) {

@@ -5,6 +5,13 @@ class RouteComponent extends React.Component {
         this.state = {}
     }
 
+
+
+componentDidMount() { 
+    let ff = window.ReactRouterDOM.BrowserRouter
+
+    }
+
     render() {
         let Router = window.ReactRouterDOM.BrowserRouter
         let Route = window.ReactRouterDOM.Route
@@ -13,17 +20,17 @@ class RouteComponent extends React.Component {
         let element = (
             <Router>
                 <Switch>
-                    <Route exact path="/" component={WelcomeForm}>
-                    </Route>
+                    <Route exact path="/" component={WelcomeForm} />
 
-                    <Route exact path="/l" component={LoginForm}>
-                    </Route>
+                    <Route exact path="/l" component={LoginForm} />
 
-                    <Route exact path="/g" component={GuessForm}> 
-                    </Route>
+                    <Route exact path="/g" component={GuessForm} />
 
-                    <Route exact path="/d"  component={DrawForm}> 
-                    </Route>
+                    <Route exact path="/d" component={DrawForm} />
+
+                    <Route exact path="/h" component={HighscoresForm} />
+
+                    <Route exact path="/r" component={ResultForm} />
                 </Switch>
             </Router>
         )

@@ -9,22 +9,31 @@ class HighscoresForm extends React.Component {
         allScoresRequest.open("GET", "scores", false)
         allScoresRequest.send()
 
+        const userName = this.props.location.state.userName
+
         if (allScoresRequest.status == 200) {
             let responseObject = JSON.parse(allScoresRequest.response)
             let scores = []
-            responseObject.map (score => {
-                scores.push(<li>{score.UserName + ' ' + score.GuessScore + ' ' + score.DrawScore}</li>)
+            responseObject.map(score => {
+                let totalScore = score.GuessScore + score.DrawScore
+                if (userName === score.UserName) {
+                    scores.push(<li className="highscoresitem selecteditem">{score.UserName + ' ' + totalScore}</li>)
+                } else {
+                    scores.push(<li className="highscoresitem">{score.UserName + ' ' + totalScore}</li>)
+                }
             })
 
-            this.setState({ ...this.state, highscores: scores, loading: false }) 
+            this.setState({ ...this.state, highscores: scores, loading: false })
         }
     }
 
     render() {
         return (
-            <div id="highscores">                                          
-                <p>{'Highscores'}</p>
-                <ul>{this.state.highscores}</ul>
+            <div className="centeredcontainer" id="highscores">
+                <button type="button" className = "sketch1" onClick={() => this.props.history.goBack()}>MENU</button>
+
+                <p className="nick">{'Highscores'}</p>
+                <ul className="score">{this.state.highscores}</ul>
             </div>
         )
     }

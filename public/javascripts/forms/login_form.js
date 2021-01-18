@@ -15,7 +15,7 @@ class LoginForm extends React.Component {
         var request = new XMLHttpRequest()
         request.open('POST', 'login', false)
         request.setRequestHeader(
-            'Content-Type',
+            'content-type',
             'application/x-www-form-urlencoded'
         )
         request.send(params)
@@ -39,8 +39,9 @@ class LoginForm extends React.Component {
         return (
             <div>
                 <form>
-                    <input type="text" className = "sketch1" spellCheck="false" placeholder="nick" onChange={this.onNameChange}/> 
-                    <button type="button" className = "sketch1" onClick={() => this.onLogin()}><span>LOGIN</span></button>
+                    <input type="text" className = "sketch1" maxLength = "36" spellCheck="false" placeholder="nick" onChange={this.onNameChange}/> 
+                    <p/>
+                    <button type="button" className = "sketch1" onClick={() => this.onLogin()}>LOGIN</button>
                 </form>
             </div>
         )

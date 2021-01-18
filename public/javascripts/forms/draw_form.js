@@ -10,7 +10,7 @@ class DrawForm extends React.Component {
 
         var request = new XMLHttpRequest()
         request.open('POST', 'createDrawing', false)
-        request.setRequestHeader('Content-Type', 'application/json')
+        request.setRequestHeader('content-type', 'application/json')
         request.send()
 
         if (request.status == 201) {
@@ -31,15 +31,11 @@ class DrawForm extends React.Component {
         canvas.onmousedown = function (e) {
             isDrawing = true
             let pos = this.getMousePosition(this, e)
-            //let x = e.clientX - canvas.offsetLeft
-            //let y = e.clientY - canvas.offsetTop
             perlinPen.startNewSegment(pos[0], pos[1])
         }
 
         canvas.onmousemove = function (e) {
             if (isDrawing) {
-                //let x = e.clientX - canvas.offsetLeft
-                //let y = e.clientY - canvas.offsetTop
                 let pos = this.getMousePosition(this, e)
                 perlinPen.addPointToSegment(pos[0], pos[1])
                 let inkUsed = perlinPen.draw(ctx)
@@ -55,25 +51,25 @@ class DrawForm extends React.Component {
             isDrawing = false
         }
 
-    canvas.getMousePosition = function(canvas, event) {
-        let x = 0
-        let y = 0
+        canvas.getMousePosition = function (canvas, event) {
+            let x = 0
+            let y = 0
 
-        if (event.pageX != undefined && event.pageY != undefined) {
-           x = event.pageX;
-           y = event.pageY;
-        } else  {
-           x = event.clientX + document.body.scrollLeft
-                   + document.documentElement.scrollLeft
-           y = event.clientY + document.body.scrollTop
-                   + document.documentElement.scrollTop
+            if (event.pageX != undefined && event.pageY != undefined) {
+                x = event.pageX;
+                y = event.pageY;
+            } else {
+                x = event.clientX + document.body.scrollLeft
+                    + document.documentElement.scrollLeft
+                y = event.clientY + document.body.scrollTop
+                    + document.documentElement.scrollTop
+            }
+
+            x -= canvas.offsetLeft
+            y -= canvas.offsetTop
+
+            return [x, y]
         }
-       
-        x -= canvas.offsetLeft
-        y -= canvas.offsetTop
-
-        return [x, y]
-    }
     }
 
     onSubmit(event) {
@@ -83,11 +79,14 @@ class DrawForm extends React.Component {
         var params = JSON.stringify({ drawingId: this.state.drawingId, image: dataUrl })
         var request = new XMLHttpRequest()
         request.open('POST', 'draw', false)
-        request.setRequestHeader('Content-Type', 'application/json')
+        request.setRequestHeader('content-type', 'application/json')
         request.send(params)
 
         if (request.status == 201) {
+            alert("Submit successfull")
             this.props.history.push('/')
+        } else {
+
         }
     }
 
@@ -106,7 +105,7 @@ class DrawForm extends React.Component {
                 <div className="centeredcontainer drawWord">{this.state.wordLabel}</div>
                 <p />
 
-                <canvas ref="canvas" width="330" height="420"></canvas>
+                <canvas ref="canvas" width="330" height="400"></canvas>
                 <p />
 
                 <div className="centeredcontainer">
@@ -119,10 +118,9 @@ class DrawForm extends React.Component {
                 <p />
 
                 <div className="centeredcontainer">
-                    <button type="button" className="sketch2 centeredchild" onClick={this.onClear.bind(this)}><span>CLEAR</span></button>
-                    <button type="button" className="sketch1 centeredchild" onClick={this.onSubmit.bind(this)}><span>SUBMIT</span></button>
+                    <button type="button" className="sketch2 centeredchild" onClick={this.onClear.bind(this)}>CLEAR</button>
+                    <button type="button" className="sketch1 centeredchild" onClick={this.onSubmit.bind(this)}>SUBMIT</button>
                 </div>
-
             </div>
         )
     }

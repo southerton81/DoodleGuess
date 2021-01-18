@@ -19,11 +19,11 @@ body {
     color: transparent;
     border-bottom: 5px solid #1569c7;
     margin: 0 10px;
-    font-size: 50px;
+    font-size: 26px;
     padding: 10px;
     transition: 0.5s;
     text-transform: uppercase;
-    min-width: 50px;
+    min-width: 26px;
     text-align: center;
     font-family: kirbyFont;
 
@@ -75,33 +75,12 @@ body {
 canvas {
     display: block;
     margin-left: auto;
-    margin-right: auto; 
+    margin-right: auto;
     border: 3px solid #1569c7;
     border-top-left-radius: 105px 15px;
     border-top-right-radius: 15px 25px;
     border-bottom-right-radius: 25px 195px;
     border-bottom-left-radius: 12px 55px;
-}
-
-input {
-    background-color: white;
-    display: inline-block;
-    width: 200px;
-    height: 50px;
-    line-height: 40px;
-    font-size: 18px;
-    text-decoration: none;
-    color: #1569c7;
-    border: 3px solid #1569c7;
-    letter-spacing: 2px;
-    text-align: center;
-    position: relative;
-    transition: all 0.3s;
-    padding: 0;
-    background: white;
-    margin: 10px;
-    outline: none;
-    font-family: kirbyFont;
 }
 
 button {
@@ -245,7 +224,61 @@ input:-webkit-autofill {
 }
 
 .drawWord {
-    /* Adds visibility to letter */
     color: #1569c7;
     font-size: 40px;
+}
+
+.nick {
+    color: #1569c7;
+    font-size: 26px;
+}
+
+.score {
+    color: #1569c7;
+    font-size: 20px;
+}
+
+form {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding-top: 20px;
+}
+
+form button {
+    margin: 10px auto;
+}
+
+input {
+    background-color: white;
+    display: inline-block;
+    width: 200px;
+    height: 50px;
+    line-height: 40px;
+    font-size: 18px;
+    text-decoration: none;
+    color: #1569c7;
+    border: 3px solid #1569c7;
+    letter-spacing: 2px;
+    text-align: center;
+    position: relative;
+    transition: all 0.3s;
+    padding: 0;
+    background: white;
+    margin: 10px auto;
+    outline: none;
+    font-family: kirbyFont;
+}
+
+ul {
+    list-style-type: none;  
+    -webkit-padding-start: 0px;
+}
+
+.highscoresitem {
+    margin: 8px 0;
+}
+
+.selecteditem {
+    background-color: #c1c1c1;
 }

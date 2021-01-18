@@ -5,6 +5,7 @@ class GuessForm extends React.Component {
         this.onSkip = this.onSkip.bind(this)
         this.onSubmitGuess = this.onSubmitGuess.bind(this)
         this.onKeyDown = this.onKeyDown.bind(this)
+        this.onHint = this.onHint.bind(this)
     }
 
     componentDidMount() {
@@ -34,7 +35,7 @@ class GuessForm extends React.Component {
             if (++currentLetter >= this.state.lettersCount) {
                 currentLetter = 0
             }
-            this.setState({ ...this.state, currentLetter: currentLetter }) 
+            this.setState({ ...this.state, currentLetter: currentLetter })
         }
     }
 
@@ -52,39 +53,39 @@ class GuessForm extends React.Component {
     }
 
     showDrawing(request) {
-        const drawing = JSON.parse(request.response);
-        var ctx = this.refs.canvas.getContext('2d');
-        var img = new Image();
-        img.src = drawing.data;
-        let drawingId = drawing.drawingId;
-        let wordLength = drawing.wordLength;
+        const drawing = JSON.parse(request.response)
+        var ctx = this.refs.canvas.getContext('2d')
+        var img = new Image()
+        img.src = drawing.data
+        let drawingId = drawing.drawingId
+        let wordLength = drawing.wordLength
         img.onload = () => {
-            ctx.clearRect(0, 0, this.refs.canvas.width, this.refs.canvas.height);
-            ctx.drawImage(img, 0, 0);
+            ctx.clearRect(0, 0, this.refs.canvas.width, this.refs.canvas.height)
+            ctx.drawImage(img, 0, 0)
             this.setState({
-            ...this.state,
+                ...this.state,
                 lettersCount: wordLength,
                 currentLetter: 0,
                 word: Array(wordLength),
                 drawingId: drawingId
-            });
-        };
+            })
+        }
     }
 
     onSkip(event) {
-        var params = JSON.stringify({ 
+        var params = JSON.stringify({
             drawingId: this.state.drawingId
         })
 
         let request = new XMLHttpRequest()
         request.open('POST', 'skip', false)
-        request.setRequestHeader('Content-Type', 'application/json')
+        request.setRequestHeader('content-type', 'application/json')
         request.send(params)
 
         if (request.status == 200) {
             this.showDrawing(request)
         } else {
-            this.props.history.push('/')
+            this.props.history.replace('/')
             alert('Sorry, no more drawings available')
         }
     }
@@ -96,18 +97,32 @@ class GuessForm extends React.Component {
         })
         var request = new XMLHttpRequest()
         request.open('POST', 'guess', false)
-        request.setRequestHeader('Content-Type', 'application/json')
+        request.setRequestHeader('content-type', 'application/json')
         request.send(params)
 
         if (request.status == 200) {
-            const guessResult = JSON.parse(request.response)
-            if (guessResult.status == 1) {
-                console.log('yes')
-            } else {
-                console.log('no')
-            }
+            const guessResult = JSON.parse(request.response).result
+            this.props.history.replace("/r", { guessStatus: guessResult.GuessStatus,
+                 word: guessResult.Word,
+                 score: guessResult.Score
+                })
         } else {
-             
+            alert("Cannot submit guess...")
+        }
+    }
+
+    onHint() {
+        let params = "?drawingId="+encodeURIComponent(this.state.drawingId) 
+
+        let request = new XMLHttpRequest()
+        request.open('GET', 'hint' + params, false)
+        request.send()
+
+        if (request.status == 200) {
+            const hint = JSON.parse(request.response) 
+            this.setState({ ...this.state, word: hint, currentLetter: 1 })
+        } else { 
+            alert('Error occured')
         }
     }
 
@@ -122,16 +137,26 @@ class GuessForm extends React.Component {
             if (letter !== '*') {
                 className += "visibleLetter "
             }
-                
+
             letterList.push(<li className={className}>{letter}</li>)
         }
 
         let element = (
             <div id="guess">
-                <canvas ref="canvas" width="640" height="425"></canvas>
-                <ul>{letterList}</ul>
-                <button type="button" className="sketch3" onClick={this.onSkip}>Skip</button>
-                <button type="button" className="sketch1" onClick={this.onSubmitGuess}>Guess</button>
+                <canvas ref="canvas" width="330" height="400"></canvas>
+
+                <div className="centeredcontainer">
+                    <ul>{letterList}</ul>
+                </div>
+
+                <div className="centeredcontainer">
+                    <button type="button" className="sketch3" onClick={this.onSkip}>Skip</button>
+                    <button type="button" className="sketch1" onClick={this.onSubmitGuess}>Guess</button>
+                </div>
+
+                <div className="centeredcontainer">
+                    <button type="button" className="sketch2" onClick={this.onHint}>Hint</button>
+                </div>
             </div>
         )
         return element
