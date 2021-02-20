@@ -1,6 +1,7 @@
 var express = require('express')
 var UserController = require('./../controllers/user_controller.js')
 var DashboardController = require('./../controllers/dashboard_controller.js')
+var CommentsController = require('./../controllers/comments_controller.js')
 var router = express.Router()
 
 router.get('/', function (req, res, next) {
@@ -52,6 +53,15 @@ router.get('/guess', function (req, res, next) {
 router.get('/hint', function (req, res, next) {
     if (checkUserId(req))
         DashboardController.getHint(req, res, next)
+})
+
+router.get('/comments', function (req, res, next) {
+    if (checkUserId(req))
+        CommentsController.getComments(req, res, next)
+})
+
+router.post('/comment', function (req, res, next) {
+    CommentsController.createComment(req, res, next)
 })
 
 router.post('/guess', function (req, res, next) {

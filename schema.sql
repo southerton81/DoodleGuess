@@ -80,6 +80,22 @@ CREATE TABLE `USER` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
+DROP TABLE IF EXISTS `COMMENTS`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `COMMENTS` (
+  `CommentId` int NOT NULL AUTO_INCREMENT,
+  `DrawingId` int NOT NULL,
+  `UserId` int NOT NULL,
+  `Comment` varchar(4096) NOT NULL,
+  `Timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY(`CommentId`),
+  FOREIGN KEY (`UserId`) REFERENCES `USER`(`UserId`),
+  FOREIGN KEY (`DrawingId`) REFERENCES `DRAWINGS`(`DrawingId`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;

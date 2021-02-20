@@ -102,9 +102,11 @@ class GuessForm extends React.Component {
 
         if (request.status == 200) {
             const guessResult = JSON.parse(request.response).result
-            this.props.history.replace("/r", { guessStatus: guessResult.GuessStatus,
+            this.props.history.replace("/r", {
+                 guessStatus: guessResult.GuessStatus,
                  word: guessResult.Word,
-                 score: guessResult.Score
+                 score: guessResult.Score,
+                 drawingId: this.state.drawingId
                 })
         } else {
             alert("Cannot submit guess...")

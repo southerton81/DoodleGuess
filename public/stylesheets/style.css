@@ -46,6 +46,10 @@ body {
     color: #1569c7;
 }
 
+.comment {
+    color: #1569c7;
+}
+
 /* The alert message box */
 .alert {
     padding: 10px;
@@ -173,6 +177,13 @@ input.sketch1 {
     border-bottom-left-radius: 12px 55px;
 }
 
+input.sketch2 {
+    border-top-left-radius: 105px 15px;
+    border-top-right-radius: 15px 25px;
+    border-bottom-right-radius: 5px 5px;
+    border-bottom-left-radius: 12px 55px;
+}
+
 #inkContainer {
     width: 140px;
     height: 10px;
@@ -270,6 +281,11 @@ input {
     font-family: kirbyFont;
 }
 
+input.wide {
+    width: 300px;
+    height: 30px;
+}
+
 ul {
     list-style-type: none;  
     -webkit-padding-start: 0px;
@@ -281,4 +297,11 @@ ul {
 
 .selecteditem {
     background-color: #c1c1c1;
+}
+
+div.scrollable {
+    background-color: lightblue;
+    width: 300px;
+    height: 200px;
+    overflow: scroll;
 }

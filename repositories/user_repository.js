@@ -77,13 +77,11 @@ class UserRepository {
                 .then(rows => {
                     let scores = []
                     if (rows != null) {
-                        rows.map(row => {
+                        scores = rows.map(row => {
                             let userName = row.Name || ''
                             let guessScore = row.GuessScore || 0
-                            let drawScore = row.DrawScore || 0
-                            scores.push(
-                                new Score(userName, guessScore, drawScore)
-                            )
+                            let drawScore = row.DrawScore || 0 
+                            return new Score(userName, guessScore, drawScore)
                         })
                     }
 

@@ -1,8 +1,3 @@
-var User = require('./../models/user.js')
-var Drawing = require('./../models/drawing.js')
-var DbConnection = require('./../db/db_connection.js')
-var mysql = require('mysql')
-var Promise = require('promise')
 var DatabaseError = require('./../error/errors.js').DatabaseError
 var UserRepository = require('./../repositories/user_repository.js')
 

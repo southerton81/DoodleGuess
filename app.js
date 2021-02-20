@@ -54,9 +54,12 @@ app.use(function(req, res, next) {
             err,
             user
         ) {
+            if (err) {
+                return next(err)
+            }
+
             if (user) {
                 req.user = user
-                res.setHeader('userName', user.Name)
             } else {
                 req.session.reset()
             }

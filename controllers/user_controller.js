@@ -1,8 +1,3 @@
-var User = require('./../models/user.js')
-var DbConnection = require('./../db/db_connection.js')
-var mysql = require('mysql')
-var async = require('async')
-var pwdhashing = require('./../utils/pwd_hashing.js')
 var HttpError = require('./../error/errors.js').HttpError
 var AuthError = require('./../error/errors.js').AuthError
 var UserNotFoundError = require('./../error/errors.js').UserNotFoundError
@@ -42,7 +37,6 @@ UserController.login = function(req, res, next) {
         .then(user => {
             res.status(200)
             req.session.userName = name
-            res.setHeader('userName', name)
             res.end()
         })
         .catch(err => {
@@ -52,7 +46,6 @@ UserController.login = function(req, res, next) {
                     .then(user => {
                         res.status(201)
                         req.session.userName = name
-                        res.setHeader('userName', name)
                         res.end()
                     })
                     .catch(err => {
