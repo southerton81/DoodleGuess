@@ -39,8 +39,12 @@ class LoginForm extends React.Component {
         return (
             <div>
                 <form>
-                    <input type="text" className = "sketch1" maxLength = "36" spellCheck="false" placeholder="nick" onChange={this.onNameChange}/> 
                     <p/>
+                    <p/>
+
+                    <input type="text" className = "sketch1" maxLength = "24" spellCheck="false" placeholder="nick" onChange={this.onNameChange}/> 
+                    <p/>
+                    
                     <button type="button" className = "sketch1" onClick={() => this.onLogin()}>LOGIN</button>
                 </form>
             </div>

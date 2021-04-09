@@ -9,9 +9,6 @@ class CommentsRepository {
     }
 
     async getComments(drawingId) {
-        let userQuery = 'SELECT USER.Name FROM USER WHERE UserId = 174'
-            let userRow = await DbConnection.runQuery(userQuery)
-
         let commentsRows = await DbConnection.runQuery(this._getCommentsQuery(drawingId))
         let commentsWithUserNames = commentsRows.map (async commentRow => { 
             let userId = commentRow.UserId 
@@ -24,8 +21,8 @@ class CommentsRepository {
     }   
 
     async createComment(userId, drawingId, commentText) {
-        let comment = new Comment(userId, drawingId, commentText, 
-            new Date().toISOString().slice(0, 19).replace('T', ' '))
+        let comment = new Comment(userId, drawingId, commentText)
+        //Default by db new Date().toISOString().slice(0, 19).replace('T', ' '))
         var insertQuery = 'INSERT INTO COMMENTS SET ' + mysql.escape(comment) 
         await DbConnection.runQuery(insertQuery)
     }

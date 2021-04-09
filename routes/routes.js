@@ -60,6 +60,11 @@ router.get('/comments', function (req, res, next) {
         CommentsController.getComments(req, res, next)
 })
 
+router.get('/news', function (req, res, next) {
+    if (checkUserId(req))
+        DashboardController.getNews(req, res, next)
+})
+
 router.post('/comment', function (req, res, next) {
     CommentsController.createComment(req, res, next)
 })

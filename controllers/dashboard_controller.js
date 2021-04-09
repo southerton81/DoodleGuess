@@ -1,7 +1,9 @@
 var DatabaseError = require('./../error/errors.js').DatabaseError
 var UserRepository = require('./../repositories/user_repository.js')
+var NewsRepository = require('./../repositories/news_repository.js')
 
 const userRepository = new UserRepository()
+const newsRepository = new NewsRepository()
 
 /**
  * Main game controller, may be divided into DrawingController, GuessController, ScoreController
@@ -109,6 +111,19 @@ DashboardController.skipDrawing = function (req, res, next) {
         .then(result => {
             return DashboardController.getDrawing(req, res, next)
         }).catch(err => {
+            return next(err)
+        })
+}
+
+DashboardController.getNews = function (req, res, next) {
+    newsRepository
+        .getNews()
+        .then(news => {
+            res.status(200)
+            res.json(news)
+            res.end()
+        })
+        .catch(err => {
             return next(err)
         })
 }

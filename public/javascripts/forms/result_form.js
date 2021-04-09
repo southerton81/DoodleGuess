@@ -2,6 +2,7 @@
 class ResultForm extends React.Component {
     constructor(props) {
         super(props)
+        this.onCommentChange = this.onCommentChange.bind(this)
         this.state = { message: '', word: '', comments: [] }
     }
 
@@ -29,37 +30,48 @@ class ResultForm extends React.Component {
     onNext() {
         this.props.history.replace("/g")
 
-        var params = JSON.stringify({
-            drawingId: this.props.location.state.drawingId,
-            comment: "fd"
-        })
-        var request = new XMLHttpRequest()
-        request.open('POST', 'comment', false)
-        request.setRequestHeader('content-type', 'application/json')
-        request.send(params)
+        let newComment = this.state.newComment
+        if (newComment && newComment.length > 0) {
+            var params = JSON.stringify({
+                drawingId: this.props.location.state.drawingId,
+                comment: newComment
+            })
+            var request = new XMLHttpRequest()
+            request.open('POST', 'comment', false)
+            request.setRequestHeader('content-type', 'application/json')
+            request.send(params)
+        }
     }
 
+    onCommentChange(v) {
+        this.setState({...this.state, newComment: v.target.value})
+    }
+    
     render() {
         let commentsList = []
         for (let i = 0; i < this.state.comments.length; i++) {
-            let className = "comment"
-            commentsList.push(<li className={className}>{this.state.comments[i]}</li>)
+            let commentObject = this.state.comments[i]
+            commentsList.push(<li className={"comment"}>{commentObject.userName + ": " +commentObject.comment}</li>)
+        }
+
+        if (commentsList.length > 0) { 
+            commentsList.unshift(<li className={"commentTitle"}>{"COMMENTS"}</li>)
         }
 
         return (
             <div id="draw">
-                <p className='score centeredcontainer'>{this.state.message}</p>  
-                <p className='score centeredcontainer'>{this.state.word}</p>
+                <p className='resultMessage centeredcontainer'>{this.state.message}</p>  
+                <p className='resultMessage centeredcontainer'>{this.state.word}</p>
                 <br/><br/><br/>
-                <div id="comments" className = "centeredcontainer scrollable">
+                <div className="scrollable" id="comments">
                     <ul>{commentsList}</ul>
                 </div>
                 <form>
                     <input type="text" className="sketch2 wide" maxLength="64" spellCheck="false"
-                        placeholder="comment" onChange={this.onNameChange} /> 
+                        placeholder="Comment?" onChange={this.onCommentChange}/> 
                 </form>
                 <form>
-                    <button type="button" className = "sketch1" onClick={()=>this.onNext()}>NEXT</button>  
+                    <button type="button" className="sketch1" onClick={()=>this.onNext()}>NEXT</button>  
                 </form>
             </div>
         )

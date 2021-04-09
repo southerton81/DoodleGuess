@@ -48,6 +48,12 @@ body {
 
 .comment {
     color: #1569c7;
+    margin: 10px 0;
+}
+
+.commentTitle {
+    color: #1569c7; 
+    margin: 15px 0;
 }
 
 /* The alert message box */
@@ -247,6 +253,26 @@ input:-webkit-autofill {
 .score {
     color: #1569c7;
     font-size: 20px;
+
+    max-width: 320px;
+    display: inline-block;
+    word-break: break-all; 
+	text-align: left; 
+}
+
+.resultMessage {
+    color: #1569c7;
+    font-size: 20px;
+}
+
+.news {
+    color: #c2d0e0;
+    font-size: 20px;
+
+    max-width: 320px;
+    display: inline-block;
+    word-break: break-all; 
+	text-align: left; 
 }
 
 form {
@@ -291,7 +317,7 @@ ul {
     -webkit-padding-start: 0px;
 }
 
-.highscoresitem {
+.highscoresitem { 
     margin: 8px 0;
 }
 
@@ -299,9 +325,21 @@ ul {
     background-color: #c1c1c1;
 }
 
-div.scrollable {
-    background-color: lightblue;
+div.scrollable { 
     width: 300px;
     height: 200px;
-    overflow: scroll;
+    overflow: hidden;
+    margin: 0 auto; 
+}
+
+#wrapper {
+    position: relative;
+}
+
+#alertId {  
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10; 
 }

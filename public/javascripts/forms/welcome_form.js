@@ -5,17 +5,30 @@ class WelcomeForm extends React.Component {
     }
 
     componentDidMount() {
-        var request = new XMLHttpRequest()
+        let request = new XMLHttpRequest()
         request.open("GET", "score", false)
         request.send()
 
         if (request.status != 200) {
             this.props.history.replace("/l");
         } else {
-            var responseObject = JSON.parse(request.response)
+            let responseObject = JSON.parse(request.response)
             let score = responseObject.GuessScore + responseObject.DrawScore
             let userName = responseObject.UserName
             this.setState({ label: userName, loading: false, score: score })
+        }
+
+        let newsRequest = new XMLHttpRequest()
+        newsRequest.open("GET", "news", false)
+        newsRequest.send()
+
+        if (newsRequest.status == 200) {
+            let newsArray = []
+            JSON.parse(newsRequest.response).map(newsItem => {
+                newsArray.push(<li className="highscoresitem">{newsItem.Timestamp + ': ' + newsItem.Text}</li>)
+            })
+
+            this.setState({ news: newsArray })
         }
     }
     
@@ -40,6 +53,8 @@ class WelcomeForm extends React.Component {
                     <button type="button" className="sketch4" onClick={() => this.props.history.push("/h", { userName: this.state.label })}>SCORES</button>
                     <button type="button" className="sketch3" onClick={() => this.onLogout()}>LOGOUT</button>
                 </form>
+
+                <ul className="news">{this.state.news}</ul>
             </div>
         )
     }

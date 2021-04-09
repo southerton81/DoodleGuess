@@ -145,7 +145,8 @@ class GuessForm extends React.Component {
 
         let element = (
             <div id="guess">
-                <canvas ref="canvas" width="330" height="400"></canvas>
+                <button type="button" className="sketch4">&lt; Menu</button>
+                <canvas ref="canvas" width="330" height="380"></canvas>
 
                 <div className="centeredcontainer">
                     <ul>{letterList}</ul>

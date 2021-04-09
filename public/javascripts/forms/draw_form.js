@@ -105,7 +105,7 @@ class DrawForm extends React.Component {
                 <div className="centeredcontainer drawWord">{this.state.wordLabel}</div>
                 <p />
 
-                <canvas ref="canvas" width="330" height="400"></canvas>
+                <canvas ref="canvas" width="330" height="380"></canvas>
                 <p />
 
                 <div className="centeredcontainer">

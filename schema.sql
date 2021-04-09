@@ -28,6 +28,7 @@ CREATE TABLE `HISTORY` (
   `UserId` int NOT NULL,
   `DrawingId` int NOT NULL,
   `Result` int NOT NULL,
+  `Timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY(`HistoryId`),
   UNIQUE(`UserId`, `DrawingId`, `Result`),
   FOREIGN KEY (`UserId`) REFERENCES `USER`(`UserId`),

@@ -15,7 +15,6 @@ CommentsController.getComments = function (req, res, next) {
         .catch(err => {
             return next(err)
         })
-
 }
 
 CommentsController.createComment = function (req, res, next) {
