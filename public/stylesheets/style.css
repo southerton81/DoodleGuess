@@ -266,12 +266,12 @@ input:-webkit-autofill {
 }
 
 .news {
-    color: #c2d0e0;
+    color: #1569c7;
     font-size: 20px;
 
     max-width: 320px;
     display: inline-block;
-    word-break: break-all; 
+    word-break: break-word; 
 	text-align: left; 
 }
 

@@ -25,8 +25,17 @@ class WelcomeForm extends React.Component {
         if (newsRequest.status == 200) {
             let newsArray = []
             JSON.parse(newsRequest.response).map(newsItem => {
-                newsArray.push(<li className="highscoresitem">{newsItem.Timestamp + ': ' + newsItem.Text}</li>)
+                let date = new Date(newsItem.Timestamp * 1000)
+    
+                date.setMinutes(date.getMinutes() - date.getTimezoneOffset())
+
+
+                newsArray.push(<li className="highscoresitem">{date.toISOString().split('T')[0] + ': ' + newsItem.Text}<p></p></li>)
             })
+
+            if (newsArray.length > 0) {
+                newsArray.splice(0,0, <p>NEWS</p>)
+            }
 
             this.setState({ news: newsArray })
         }

@@ -117,7 +117,7 @@ DashboardController.skipDrawing = function (req, res, next) {
 
 DashboardController.getNews = function (req, res, next) {
     newsRepository
-        .getNews()
+        .getNews(req.user.UserId)
         .then(news => {
             res.status(200)
             res.json(news)

@@ -7,29 +7,38 @@ var UserNotFoundError = require('../error/errors.js').UserNotFoundError
 
 class NewsRepository {
     async getNews(userId) {
- 
-        
-       
-        await Promise.all([DbConnection.runQuery(_getGuessNewsQuery()),
-            DbConnection.runQuery(_getCommentsNewsQuery())])
+        let newGuessesRows = await DbConnection.runQuery(this._getGuessNewsQuery(userId))
 
+        let guessNewsItems = newGuessesRows.map(row => { 
+            let name = row.Name
+            let word = row.Word
+            return new NewsItem(row.UNIX_TS, name + " guessed your " + word + " picture, score + 1")
+        })
 
+        let newCommentsRows = await DbConnection.runQuery(this._getCommentsNewsQuery(userId))
 
-        return [new NewsItem("ts", "2"), new NewsItem("ts2", "2")]
+        let commentsNewsItems = newCommentsRows.map(row => {
+            let name = row.Name
+            let word = row.Word
+            let comment = row.Comment
+            return new NewsItem(row.UNIX_TS, name + " commented your "  + word + " picture: " + comment)
+        })
+
+        return [...guessNewsItems, ...commentsNewsItems]
     }
 
-    _getGuessNewsQuery() {
-        'SELECT USER.Name, DRAWINGS.UserId, HISTORY.UserId, HISTORY.Result, HISTORY.Timestamp' +
-            'FROM DRAWINGS' +
+    _getGuessNewsQuery(currentUserId) {
+        return ('SELECT USER.Name, DRAWINGS.Word, UNIX_TIMESTAMP(HISTORY.Timestamp) AS UNIX_TS ' +
+            'FROM DRAWINGS ' +
 
-            'JOIN HISTORY ON HISTORY.DrawingId = DRAWINGS.DrawingId' +
-            'JOIN USER ON USER.UserId = HISTORY.UserId' +
+            'JOIN HISTORY ON HISTORY.DrawingId = DRAWINGS.DrawingId ' +
+            'JOIN USER ON USER.UserId = HISTORY.UserId ' +
             
-            'WHERE DRAWINGS.UserId = 129 ORDER BY HISTORY.Timestamp DESC LIMIT 25;'
+            'WHERE DRAWINGS.UserId = ' + currentUserId + ' ORDER BY UNIX_TS DESC LIMIT 20;')
 
         /*
         Find all results from history for CurrentUserId as an author of drawing.
-        We are interested with a name of user who guessed drawings and timestamp of this event.
+        We are interested with a name of user who guessed drawings, result and timestamp of this event.
 
         1) Join history with drawings on drawingId and find only rows in this join where
            Drawings.UserId = CurrentUserId.
@@ -37,15 +46,15 @@ class NewsRepository {
         */
     } 
 
-    _getCommentsNewsQuery() {
-        'SELECT USER.Name, COMMENTS.Comment, COMMENTS.Timestamp' +
+    _getCommentsNewsQuery(currentUserId) {
+        return ('SELECT USER.Name, DRAWINGS.Word, COMMENTS.Comment, UNIX_TIMESTAMP(COMMENTS.Timestamp) AS UNIX_TS ' +
 
-        'FROM COMMENTS' +
+        'FROM COMMENTS ' +
 
-        'JOIN DRAWINGS ON DRAWINGS.DrawingId = COMMENTS.DrawingId' +
-        'JOIN USER ON USER.UserId = COMMENTS.UserId' +
+        'JOIN DRAWINGS ON DRAWINGS.DrawingId = COMMENTS.DrawingId ' +
+        'JOIN USER ON USER.UserId = COMMENTS.UserId ' +
 
-        'WHERE DRAWINGS.UserId = 129 ORDER BY COMMENTS.Timestamp DESC LIMIT 25;'
+        'WHERE DRAWINGS.UserId =' + currentUserId + ' ORDER BY UNIX_TS DESC LIMIT 20;')
 
         /* 
         Find all recent user Name, Comment, Timestamp of users who commented my drawings.

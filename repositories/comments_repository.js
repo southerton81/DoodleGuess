@@ -21,8 +21,7 @@ class CommentsRepository {
     }   
 
     async createComment(userId, drawingId, commentText) {
-        let comment = new Comment(userId, drawingId, commentText)
-        //Default by db new Date().toISOString().slice(0, 19).replace('T', ' '))
+        let comment = new Comment(userId, drawingId, commentText) 
         var insertQuery = 'INSERT INTO COMMENTS SET ' + mysql.escape(comment) 
         await DbConnection.runQuery(insertQuery)
     }
