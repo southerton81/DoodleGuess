@@ -1,7 +1,7 @@
 var User = require('../models/user.js')
 var Comment = require('../models/comment.js')
 var DbConnection = require('../db/db_connection.js')
-var mysql = require('mysql')
+var mysql = require('mysql2')
 
 class CommentsRepository {
     constructor() {

@@ -29,11 +29,14 @@ class HighscoresForm extends React.Component {
 
     render() {
         return (
-            <div className="centeredcontainer" id="highscores">
-                <button type="button" className = "sketch1" onClick={() => this.props.history.goBack()}>MENU</button>
-
-                <p className="nick">{'Highscores'}</p>
-                <ul className="score">{this.state.highscores}</ul>
+            <div>
+                <div className="topmenucontainer">
+                    <button type="button" className="menu" onClick={() => this.props.history.goBack()}>&lt; Menu</button>
+                </div>
+                <div className="centeredcontainer" id="highscores">
+                    <p className="nick">{'Highscores'}</p>
+                    <ul className="score">{this.state.highscores}</ul>
+                </div>
             </div>
         )
     }

@@ -1,7 +1,7 @@
 var User = require('../models/user.js')
 var NewsItem = require('../models/news_item.js')
 var DbConnection = require('../db/db_connection.js')
-var mysql = require('mysql')
+var mysql = require('mysql2')
 var AuthError = require('../error/errors.js').AuthError
 var UserNotFoundError = require('../error/errors.js').UserNotFoundError
 

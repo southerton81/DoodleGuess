@@ -5,27 +5,16 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+        <link rel="preload" href="../stylesheets/Doodle.ttf" as="font">
         <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
-
-        <script>
-            function alert(msg, timeout = 4000) {
-                var alertTitle = document.getElementById("alertTitleId");
-                let alertBar = document.getElementById("alertId");
-                alertBar.style.visibility = "visible";
-                window.scrollTo(0, 0);
-                setTimeout(function () {
-                    var alertBar = document.getElementById("alertId");
-                    alertBar.style.visibility = "hidden";
-                }, timeout);
-                alertTitle.innerHTML = msg;
-            }
-        </script>
+        <link rel="stylesheet" type="text/css" href="stylesheets/mbox.css">
         
         <script src="react-15.2.1.js"></script>
         <script src="react-dom-15.2.1.js"></script>
         <script src="react-router-dom.min.js"></script>
         <script src="babel.min.js"></script>
 
+        <script type="text/babel" src="javascripts/message_box.js"></script>
         <script type="text/babel" src="javascripts/forms/result_form.js"></script>
         <script type="text/babel" src="javascripts/forms/login_form.js"></script>
         <script type="text/babel" src="javascripts/engine/perlin_pen.js"></script>
@@ -35,16 +24,16 @@
         <script type="text/babel" src="javascripts/forms/guess_form.js"></script>
         <script type="text/babel" src="javascripts/route_components.js"></script>
         <script type="text/babel" src="javascripts/main.js"></script>
+
+        <script>
+            function alert(msg) {
+                new MessageBox("#messageDiv", {closeAfterMs: 1600}).show(msg)
+            }
+        </script>
     </head>
 
-    <body>
-        <div id="wrapper"> 
-            <div class="alert" id="alertId" style="visibility: hidden;">
-                <span class="closebtn" onclick="this.parentElement.style.visibility='hidden';">x</span> 
-                <b id="alertTitleId">Message</b>
-            </div>
-
-            <div id="app"></div>
-        </div>
+    <body>        
+          <div id="app"></div>
+          <div id="messageDiv" class="messageDiv"></div>
     </body>
 </html>

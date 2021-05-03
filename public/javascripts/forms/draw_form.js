@@ -25,7 +25,7 @@ class DrawForm extends React.Component {
         const inkProgress = this.refs.inkProgress
         this.setState({ ...this.state, inkLeft: 100 })
         const perlinPen = new PerlinPen()
-        let isDrawing
+        let isDrawing = false
         let drawForm = this
 
         canvas.onmousedown = function (e) {
@@ -86,7 +86,7 @@ class DrawForm extends React.Component {
             alert("Submit successfull")
             this.props.history.push('/')
         } else {
-
+            alert("No connection error...")
         }
     }
 
@@ -96,16 +96,22 @@ class DrawForm extends React.Component {
         this.initPen()
     }
 
+    onMenu() {
+        this.props.history.replace('/')
+    }
+    
     render() {
         const inkProgressStyle = {
             width: this.state.inkLeft + '%'
         }
         return (
             <div id="draw">
+                <div className="topmenucontainer">
+                    <button type="button" className="menu" onClick={this.onMenu.bind(this)}>&lt; Menu</button>
+                </div> 
                 <div className="centeredcontainer drawWord">{this.state.wordLabel}</div>
                 <p />
-
-                <canvas ref="canvas" width="330" height="380"></canvas>
+                <canvas ref="canvas" width="300" height="380"></canvas>
                 <p />
 
                 <div className="centeredcontainer">

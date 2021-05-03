@@ -5,7 +5,8 @@ class GuessForm extends React.Component {
         this.onSkip = this.onSkip.bind(this)
         this.onSubmitGuess = this.onSubmitGuess.bind(this)
         this.onKeyDown = this.onKeyDown.bind(this)
-        this.onHint = this.onHint.bind(this)
+        this.onHint = this.onHint.bind(this) 
+        this.onMenu = this.onMenu.bind(this) 
     }
 
     componentDidMount() {
@@ -128,6 +129,10 @@ class GuessForm extends React.Component {
         }
     }
 
+    onMenu() {
+        this.props.history.replace('/')
+    }
+
     render() {
         let letterList = []
         for (let i = 0; i < this.state.lettersCount; i++) {
@@ -145,8 +150,11 @@ class GuessForm extends React.Component {
 
         let element = (
             <div id="guess">
-                <button type="button" className="sketch4">&lt; Menu</button>
-                <canvas ref="canvas" width="330" height="380"></canvas>
+                <div className="topmenucontainer">
+                    <button type="button" className="menu" onClick={this.onMenu}>&lt; Menu</button>
+                </div>
+
+                <canvas ref="canvas" width="300" height="380"></canvas>
 
                 <div className="centeredcontainer">
                     <ul>{letterList}</ul>

@@ -1,4 +1,4 @@
-var mysql = require('mysql');
+var mysql = require('mysql2');
 var DatabaseError = require('./../error/errors.js').DatabaseError;
 var fs = require('fs');
 
@@ -9,7 +9,7 @@ var pool = mysql.createPool({
     password: fs.readFileSync('./pwd').toString(),
     database: fs.readFileSync('./dbs').toString(),
     debug: false
-});
+})
 
 DbConnection = {}
 

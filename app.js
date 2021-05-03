@@ -82,6 +82,5 @@ app.use(function(err, req, res, next) {
     console.log(err.stack)
 })
 
-app.listen(3015)
 
 module.exports = app

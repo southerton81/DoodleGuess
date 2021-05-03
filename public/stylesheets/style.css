@@ -1,6 +1,6 @@
 @font-face {
     font-family: kirbyFont;
-    src: url(kirbyss.ttf);
+    src: url(Guestservice.ttf);
 }
 
 @keyframes selectedAnim {
@@ -11,6 +11,7 @@
 
 body {
     font-family: kirbyFont;
+    overscroll-behavior: contain;
 }
 
 .guessletter {
@@ -95,7 +96,7 @@ canvas {
 
 button {
     display: inline-block;
-    width: 145px;
+    width: 155px;
     height: 50px;
     line-height: 40px;
     font-size: 18px;
@@ -183,6 +184,16 @@ input.sketch1 {
     border-bottom-left-radius: 12px 55px;
 }
 
+button.menu {
+    width: 125px;
+    height: 40px;
+    line-height: 30px;
+    border-top-left-radius: 150px 100px;
+    border-top-right-radius: 125px 125px;
+    border-bottom-right-radius: 150px 205px;
+    border-bottom-left-radius: 105px 55px;
+}
+
 input.sketch2 {
     border-top-left-radius: 105px 15px;
     border-top-right-radius: 15px 25px;
@@ -240,6 +251,13 @@ input:-webkit-autofill {
     display: inline-block;
 }
 
+.topmenucontainer {
+    display: block;
+    margin-left: auto;
+    margin-right: auto; 
+    width: 330px;
+}
+
 .drawWord {
     color: #1569c7;
     font-size: 40px;
@@ -286,6 +304,14 @@ form button {
     margin: 10px auto;
 }
 
+.title {
+    font-size: 32px;
+    margin: 10px auto;
+    color: #1569c7;
+    display: inline-block;
+    word-break: break-word; 
+}
+
 input {
     background-color: white;
     display: inline-block;
@@ -321,8 +347,9 @@ ul {
     margin: 8px 0;
 }
 
-.selecteditem {
-    background-color: #c1c1c1;
+.selecteditem {  
+    padding: 5px 3px;
+    background-color: #f7ee71;
 }
 
 div.scrollable { 

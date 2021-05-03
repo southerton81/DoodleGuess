@@ -7,10 +7,11 @@ class LoginForm extends React.Component {
 
     onLogin(event) {
         if (!this.state.name) {
-            alert('Wrong name')
+            alert('Please enter nickname')
             return
         }
 
+        alert('Hi ' + this.state.name)
         var params ='name=' + encodeURIComponent(this.state.name) 
         var request = new XMLHttpRequest()
         request.open('POST', 'login', false)
@@ -35,17 +36,22 @@ class LoginForm extends React.Component {
         })
     }
 
+    onHandleKey(e) {
+        if (e.key == 'Enter') {
+            this.onLogin()
+        }
+    }
+
     render() {
         return (
             <div>
                 <form>
+                    <p className="title">Doodle Guess Game</p>  
                     <p/>
+                    <input autoFocus type="text" className="sketch1" maxLength="20" spellCheck="false" placeholder="nick"
+                        onChange={this.onNameChange} onKeyDown={(e) => this.onHandleKey(e)}/> 
                     <p/>
-
-                    <input type="text" className = "sketch1" maxLength = "24" spellCheck="false" placeholder="nick" onChange={this.onNameChange}/> 
-                    <p/>
-                    
-                    <button type="button" className = "sketch1" onClick={() => this.onLogin()}>LOGIN</button>
+                    <button type="button" className="sketch1" onClick={() => this.onLogin()}>LOGIN</button>
                 </form>
             </div>
         )
