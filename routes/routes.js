@@ -2,6 +2,7 @@ var express = require('express')
 var UserController = require('./../controllers/user_controller.js')
 var DashboardController = require('./../controllers/dashboard_controller.js')
 var CommentsController = require('./../controllers/comments_controller.js')
+var CommentsController = require('./../controllers/admin_controller.js')
 var router = express.Router()
 
 router.get('/', function (req, res, next) {
@@ -28,6 +29,30 @@ router.get('/r', function (req, res, next) {
     res.sendfile('public/index.html')
 })
 
+router.get('/score', function (req, res, next) {
+    DashboardController.getScore(req, res, next)
+})
+
+router.get('/scores', function (req, res, next) {
+    DashboardController.getHighscores(req, res, next)
+})
+
+router.get('/guess', function (req, res, next) {
+    DashboardController.getDrawing(req, res, next)
+})
+
+router.get('/hint', function (req, res, next) {
+    DashboardController.getHint(req, res, next)
+})
+
+router.get('/comments', function (req, res, next) {
+    CommentsController.getComments(req, res, next)
+})
+
+router.get('/news', function (req, res, next) {
+    DashboardController.getNews(req, res, next)
+})
+
 router.post('/login', function (req, res, next) {
     UserController.login(req, res, next)
 })
@@ -36,42 +61,12 @@ router.post('/logout', function (req, res, next) {
     UserController.logout(req, res, next)
 })
 
-router.get('/score', function (req, res, next) {
-    if (checkUserId(req))
-        DashboardController.getScore(req, res, next)
-})
-
-router.get('/scores', function (req, res, next) {
-    if (checkUserId(req))
-        DashboardController.getHighscores(req, res, next)
-})
-
-router.get('/guess', function (req, res, next) {
-    DashboardController.getDrawing(req, res, next)
-})
-
-router.get('/hint', function (req, res, next) {
-    if (checkUserId(req))
-        DashboardController.getHint(req, res, next)
-})
-
-router.get('/comments', function (req, res, next) {
-    if (checkUserId(req))
-        CommentsController.getComments(req, res, next)
-})
-
-router.get('/news', function (req, res, next) {
-    if (checkUserId(req))
-        DashboardController.getNews(req, res, next)
-})
-
 router.post('/comment', function (req, res, next) {
     CommentsController.createComment(req, res, next)
 })
 
 router.post('/guess', function (req, res, next) {
-    if (checkUserId(req))
-        DashboardController.setGuess(req, res, next)
+    DashboardController.setGuess(req, res, next)
 })
 
 router.post('/skip', function (req, res, next) {
@@ -82,25 +77,54 @@ router.post('/skip', function (req, res, next) {
  * Create new drawing with a word and id in database
  */
 router.post('/createDrawing', function (req, res, next) {
-    if (checkUserId(req))
-        DashboardController.createDrawing(req, res, next)
+    DashboardController.createDrawing(req, res, next)
 })
 
 /**
- * Add drawing data to alraeady created drawing by id
+ * Add drawing data to already created drawing by id
  */
 router.post('/draw', function (req, res, next) {
-    if (checkUserId(req))
-        DashboardController.saveDrawing(req, res, next)
+    DashboardController.saveDrawing(req, res, next)
 })
 
-function checkUserId(req) {
-    if (!req.user.UserId) {
-        res.status(401)
-        res.end()
+/**
+ * Admin requests
+ */
+router.get('/adminNextDrawing', function (req, res, next) {
+    if (protectRoute(req, res)) {
+        AdminController.validateNext(req, res, next)
+    }
+})
+
+router.post('/drawingValidity', function (req, res, next) {
+    if (protectRoute(req, res)) {
+        AdminController.drawingValidity(req, res, next)
+    }
+})
+ 
+
+/* Utility */
+function protectRoute (req, res) {
+    const reject = () => {
+        res.setHeader('www-authenticate', 'Basic')
+        res.sendStatus(401)
         return false
-    } 
+    }
+
+    const authorization = req.headers.authorization
+
+    if (!authorization) {
+        return reject()
+    }
+
+    const [username, password] = Buffer.from(authorization.replace('Basic ', ''), 'base64').toString().split(':')
+
+    //if (!(username === '' && password === '')) {
+     //   return reject()
+   // }
+
     return true
 }
+
 
 module.exports = router

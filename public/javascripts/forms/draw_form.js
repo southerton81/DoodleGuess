@@ -7,16 +7,51 @@ class DrawForm extends React.Component {
 
     componentDidMount() {
         this.initPen()
+        this.createDrawing()
+        this.initTouchSupport(this.refs.canvas)
+    }
 
-        var request = new XMLHttpRequest()
-        request.open('POST', 'createDrawing', false)
-        request.setRequestHeader('content-type', 'application/json')
-        request.send()
+    initTouchSupport(canvas) {
+        canvas.addEventListener("touchstart", function (e) {
+            var touch = e.touches[0];
+            var mouseEvent = new MouseEvent("mousedown", {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            })
+            canvas.dispatchEvent(mouseEvent)
+        }, false)
 
-        if (request.status == 201) {
-            const drawing = JSON.parse(request.response)
-            this.setState({ wordLabel: drawing.Word, drawingId: drawing.DrawingId })
-        }
+        canvas.addEventListener("touchend", function (e) {
+            var mouseEvent = new MouseEvent("mouseup", {})
+            canvas.dispatchEvent(mouseEvent);
+        }, false)
+
+        canvas.addEventListener("touchmove", function (e) {
+            var touch = e.touches[0]
+            var mouseEvent = new MouseEvent("mousemove", {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            })
+            canvas.dispatchEvent(mouseEvent);
+        }, false)
+
+        document.body.addEventListener("touchstart", function (e) {
+            if (e.target == canvas) {
+                e.preventDefault()
+            }
+        }, false)
+
+        document.body.addEventListener("touchend", function (e) {
+            if (e.target == canvas) {
+                e.preventDefault()
+            }
+        }, false)
+
+        document.body.addEventListener("touchmove", function (e) {
+            if (e.target == canvas) {
+                e.preventDefault()
+            }
+        }, false)
     }
 
     initPen() {
@@ -72,21 +107,41 @@ class DrawForm extends React.Component {
         }
     }
 
-    onSubmit(event) {
+    async createDrawing() {
+        try {
+            let response = await postRequest('createDrawing', null)
+            const drawing = JSON.parse(response)
+            this.setState({ wordLabel: drawing.Word, drawingId: drawing.DrawingId })
+        } catch (status) {
+            if (status == 401) {
+                alert('Please login')
+            } else {
+                alert("Error creating new drawing...")
+            }
+            this.props.history.push('/')
+        }
+    }
+
+    async onSubmit(event) {
         const canvas = this.refs.canvas
         let dataUrl = canvas.toDataURL()
 
-        var params = JSON.stringify({ drawingId: this.state.drawingId, image: dataUrl })
-        var request = new XMLHttpRequest()
-        request.open('POST', 'draw', false)
-        request.setRequestHeader('content-type', 'application/json')
-        request.send(params)
-
-        if (request.status == 201) {
-            alert("Submit successfull")
-            this.props.history.push('/')
+        if (this.state.inkLeft == 100) {
+            alert("Drawing is empty")
         } else {
-            alert("No connection error...")
+            try {
+                let params = JSON.stringify({ drawingId: this.state.drawingId, image: dataUrl })
+                let response = await postRequest('draw', params)
+                alert("Submit successfull")
+                this.props.history.push('/')
+            } catch (status) {
+                if (status == 401) {
+                    this.props.history.push('/')
+                    alert('Please login')
+                } else {
+                    alert("No connection error...")
+                }
+            }
         }
     }
 
@@ -99,7 +154,7 @@ class DrawForm extends React.Component {
     onMenu() {
         this.props.history.replace('/')
     }
-    
+
     render() {
         const inkProgressStyle = {
             width: this.state.inkLeft + '%'
@@ -108,10 +163,10 @@ class DrawForm extends React.Component {
             <div id="draw">
                 <div className="topmenucontainer">
                     <button type="button" className="menu" onClick={this.onMenu.bind(this)}>&lt; Menu</button>
-                </div> 
+                </div>
                 <div className="centeredcontainer drawWord">{this.state.wordLabel}</div>
                 <p />
-                <canvas ref="canvas" width="300" height="380"></canvas>
+                <canvas ref="canvas" width="300" height="320"></canvas>
                 <p />
 
                 <div className="centeredcontainer">

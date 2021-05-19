@@ -1,12 +1,12 @@
 class GuessForm extends React.Component {
     constructor(props) {
         super(props)
-        this.state = { lettersCount: -1, currentLetter: -1, word: [], drawingId: null }
+        this.state = { lettersCount: -1, currentLetter: -1, word: [], drawingId: null, userName: "" }
         this.onSkip = this.onSkip.bind(this)
         this.onSubmitGuess = this.onSubmitGuess.bind(this)
         this.onKeyDown = this.onKeyDown.bind(this)
-        this.onHint = this.onHint.bind(this) 
-        this.onMenu = this.onMenu.bind(this) 
+        this.onHint = this.onHint.bind(this)
+        this.onMenu = this.onMenu.bind(this)
     }
 
     componentDidMount() {
@@ -40,26 +40,73 @@ class GuessForm extends React.Component {
         }
     }
 
-    getDrawing() {
-        let request = new XMLHttpRequest()
-        request.open('GET', 'guess', false)
-        request.send()
-
-        if (request.status == 200) {
-            this.showDrawing(request);
-        } else {
+    async getDrawing() {
+        try {
+            let response = await getRequest('guess')
+            this.showDrawing(response)
+        } catch (status) {
             this.props.history.push('/')
+            if (status == 401) {
+                alert('Please login')
+            } else {
+                alert('Sorry, no more drawings available')
+            }
+        }
+    }
+
+    async onSkip(event) {
+        try {
+            let response = await postRequest('skip', JSON.stringify({
+                drawingId: this.state.drawingId
+            }))
+            this.showDrawing(response)
+        } catch (error) {
+            this.props.history.replace('/')
             alert('Sorry, no more drawings available')
         }
     }
 
-    showDrawing(request) {
-        const drawing = JSON.parse(request.response)
+    async onSubmitGuess(event) {
+        try {
+            let response = await postRequest('guess', JSON.stringify({
+                word: this.state.word.join(''),
+                drawingId: this.state.drawingId
+            }))
+            const guessResult = JSON.parse(response).result
+            this.props.history.replace("/r", {
+                guessStatus: guessResult.GuessStatus,
+                word: guessResult.Word,
+                score: guessResult.Score,
+                drawingId: this.state.drawingId
+            })
+        } catch (error) {
+            alert('Cannot submit guess...') 
+        }
+    }
+
+    async onHint() {
+        try {
+            let params = "?drawingId=" + encodeURIComponent(this.state.drawingId)
+            let response = await getRequest('hint' + params)
+            const hint = JSON.parse(response)
+            this.setState({ ...this.state, word: hint, currentLetter: 1 })
+        } catch (status) {
+            alert('Error occured')
+        }
+    }
+
+    onMenu() {
+        this.props.history.replace('/')
+    }
+
+    showDrawing(response) {
+        const drawing = JSON.parse(response)
         var ctx = this.refs.canvas.getContext('2d')
         var img = new Image()
         img.src = drawing.data
         let drawingId = drawing.drawingId
         let wordLength = drawing.wordLength
+        let userName = drawing.userName
         img.onload = () => {
             ctx.clearRect(0, 0, this.refs.canvas.width, this.refs.canvas.height)
             ctx.drawImage(img, 0, 0)
@@ -68,69 +115,10 @@ class GuessForm extends React.Component {
                 lettersCount: wordLength,
                 currentLetter: 0,
                 word: Array(wordLength),
-                drawingId: drawingId
+                drawingId: drawingId,
+                userName: userName
             })
         }
-    }
-
-    onSkip(event) {
-        var params = JSON.stringify({
-            drawingId: this.state.drawingId
-        })
-
-        let request = new XMLHttpRequest()
-        request.open('POST', 'skip', false)
-        request.setRequestHeader('content-type', 'application/json')
-        request.send(params)
-
-        if (request.status == 200) {
-            this.showDrawing(request)
-        } else {
-            this.props.history.replace('/')
-            alert('Sorry, no more drawings available')
-        }
-    }
-
-    onSubmitGuess(event) {
-        var params = JSON.stringify({
-            word: this.state.word.join(''),
-            drawingId: this.state.drawingId
-        })
-        var request = new XMLHttpRequest()
-        request.open('POST', 'guess', false)
-        request.setRequestHeader('content-type', 'application/json')
-        request.send(params)
-
-        if (request.status == 200) {
-            const guessResult = JSON.parse(request.response).result
-            this.props.history.replace("/r", {
-                 guessStatus: guessResult.GuessStatus,
-                 word: guessResult.Word,
-                 score: guessResult.Score,
-                 drawingId: this.state.drawingId
-                })
-        } else {
-            alert("Cannot submit guess...")
-        }
-    }
-
-    onHint() {
-        let params = "?drawingId="+encodeURIComponent(this.state.drawingId) 
-
-        let request = new XMLHttpRequest()
-        request.open('GET', 'hint' + params, false)
-        request.send()
-
-        if (request.status == 200) {
-            const hint = JSON.parse(request.response) 
-            this.setState({ ...this.state, word: hint, currentLetter: 1 })
-        } else { 
-            alert('Error occured')
-        }
-    }
-
-    onMenu() {
-        this.props.history.replace('/')
     }
 
     render() {
@@ -145,16 +133,20 @@ class GuessForm extends React.Component {
                 className += "visibleLetter "
             }
 
-            letterList.push(<li className={className}>{letter}</li>)
+            letterList.push(<li className={className} key={i}>{letter}</li>)
         }
 
         let element = (
-            <div id="guess">
+            <div id="guess" style={{ visibility: this.state.lettersCount != -1 ? 'visible' : 'hidden' }}>
                 <div className="topmenucontainer">
                     <button type="button" className="menu" onClick={this.onMenu}>&lt; Menu</button>
                 </div>
 
-                <canvas ref="canvas" width="300" height="380"></canvas>
+                <canvas ref="canvas" width="300" height="320"></canvas>
+
+                <div className="centeredcontainer author">
+                    by {this.state.userName}
+                </div>
 
                 <div className="centeredcontainer">
                     <ul>{letterList}</ul>

@@ -70,7 +70,8 @@ DashboardController.getDrawing = function (req, res, next) {
             let drawingId = drawing.DrawingId
             let data = drawing.Data
             let wordLength = drawing.Word.length
-            res.json({ drawingId, data, wordLength })
+            let userName = drawing.UserName
+            res.json({drawingId, data, wordLength, userName})
             res.status(200)
             res.end()
         })

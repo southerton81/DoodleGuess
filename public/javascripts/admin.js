@@ -1,6 +1,6 @@
 (function main() {
     ReactDOM.render(
-        <RouteComponent/>,
+        <AdminForm/>,
         document.getElementById('app')
     )
 })()

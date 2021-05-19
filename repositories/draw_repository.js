@@ -3,10 +3,12 @@ var Score = require('../models/score.js')
 var Drawing = require('../models/drawing.js')
 var History = require('../models/history.js')
 var GuessResult = require('../models/guess_result.js')
+var GuessDrawing = require('../models/guess_drawing.js')
 var DbConnection = require('../db/db_connection.js')
 var mysql = require('mysql2')
 var UserNotFoundError = require('../error/errors.js').UserNotFoundError
 var DatabaseError = require('../error/errors.js').DatabaseError
+ 
 
 class DrawRepository {
     constructor() {
@@ -73,7 +75,8 @@ class DrawRepository {
                     let drawingId = rows[randomRow].DrawingId
                     let data = rows[randomRow].Data
                     let word = rows[randomRow].Word
-                    return new Drawing(drawingId, null, word, data)
+                    let userName = rows[randomRow].Name
+                    return new GuessDrawing(drawingId, word, data, userName)
                 }
                 return Promise.reject(
                     new DatabaseError(
@@ -193,21 +196,24 @@ class DrawRepository {
 
     _selectAvailableDrawings(userId) {
         let querySelectCurrentDrawing =
-            'SELECT DrawingId, Data, Word FROM DRAWINGS WHERE ' +
-            'DrawingId = (SELECT DrawingId FROM HISTORY WHERE HISTORY.UserId = ' +
+            'SELECT DRAWINGS.UserId, DrawingId, Data, Word, USER.Name FROM DRAWINGS ' +
+            'JOIN USER ON USER.UserId = DRAWINGS.UserId ' +
+            'WHERE DrawingId = (SELECT DrawingId FROM HISTORY WHERE HISTORY.UserId = ' +
             userId +
             ' AND HISTORY.Result = ' +
             this.resultDrawingSelected +
-            ')'
+            ' AND DRAWINGS.Valid >= 0)'
 
         /* Select any other users' drawing that's wasn't interacted by me */
         let querySelectNewDrawing =
-            'SELECT UserId, DrawingId, Data, Word FROM DRAWINGS WHERE ' +
-            'DrawingId NOT IN (SELECT DrawingId FROM HISTORY WHERE HISTORY.UserId = ' +
+            'SELECT DRAWINGS.UserId, DrawingId, Data, Word, USER.Name FROM DRAWINGS ' +
+            'JOIN USER ON USER.UserId = DRAWINGS.UserId ' +
+            'WHERE DrawingId NOT IN (SELECT DrawingId FROM HISTORY WHERE HISTORY.UserId = ' +
             userId +
             ') AND DRAWINGS.UserId != ' +
             userId +
-            ' AND DRAWINGS.Data IS NOT NULL'
+            ' AND DRAWINGS.Data IS NOT NULL' +
+            ' AND DRAWINGS.Valid >= 0'
 
         return DbConnection.runQuery(querySelectCurrentDrawing).then(rows => {
             if (rows == null || rows.length == 0) {

@@ -5,25 +5,33 @@ class HighscoresForm extends React.Component {
     }
 
     componentDidMount() {
-        let allScoresRequest = new XMLHttpRequest()
-        allScoresRequest.open("GET", "scores", false)
-        allScoresRequest.send()
+        this.getScores()
+    }
 
-        const userName = this.props.location.state.userName
-
-        if (allScoresRequest.status == 200) {
-            let responseObject = JSON.parse(allScoresRequest.response)
+    async getScores() {
+        try {
+            let response = await getRequest('scores')
+            let responseObject = JSON.parse(response)
+            const userName = this.props.location.state.userName
             let scores = []
             responseObject.map(score => {
                 let totalScore = score.GuessScore + score.DrawScore
+
                 if (userName === score.UserName) {
-                    scores.push(<li className="highscoresitem selecteditem">{score.UserName + ' ' + totalScore}</li>)
+                    scores.push(<li className="highscoresitem selecteditem" key={score.UserName}><p>{score.UserName}</p><p>{totalScore}</p></li>)
                 } else {
-                    scores.push(<li className="highscoresitem">{score.UserName + ' ' + totalScore}</li>)
+                    scores.push(<li className="highscoresitem" key={score.UserName}><p>{score.UserName}</p><p>{totalScore}</p></li>)
                 }
             })
 
             this.setState({ ...this.state, highscores: scores, loading: false })
+        } catch (status) {
+            if (status == 401) {
+                this.props.history.push('/')
+                alert('Please login')
+            } else {
+                alert("No connection...")
+            }
         }
     }
 

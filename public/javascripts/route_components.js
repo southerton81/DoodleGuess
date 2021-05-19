@@ -5,13 +5,6 @@ class RouteComponent extends React.Component {
         this.state = {}
     }
 
-
-
-componentDidMount() { 
-    let ff = window.ReactRouterDOM.BrowserRouter
-
-    }
-
     render() {
         let Router = window.ReactRouterDOM.BrowserRouter
         let Route = window.ReactRouterDOM.Route

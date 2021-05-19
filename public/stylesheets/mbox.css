@@ -4,6 +4,7 @@
     bottom: 15px;
     left: 20px;
     right: 20px;
+    font-family: littleThings;
   }
   .messageDiv .msgbox-box {
     font-size: inherit;
@@ -42,12 +43,9 @@
       left: auto;
       right: 15px;
     }
-  } 
-  body {
-    font-family: kirbyFont;
-  }
+  }  
   .messageDiv {
-    font-size: 16px;
+    font-size: 26px;
   }
   .msgbox-message-container {
     text-align: center;

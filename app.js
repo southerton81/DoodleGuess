@@ -10,6 +10,16 @@ require('events').EventEmitter.defaultMaxListeners = 128
 
 var app = express()
 
+// Force https on Heroku
+if (process.env.NODE_ENV == 'production') {
+    app.use((req, res, next) => {
+        if (req.header('x-forwarded-proto') !== 'https')
+            res.redirect(`https://${req.header('host')}${req.url}`)
+        else
+            next()
+    })
+}
+
 app.use(cookieParser())
 
 // uncomment after placing your favicon in /public
@@ -22,7 +32,7 @@ function makeid(length) {
     var result           = '';
     var characters       = 'AB@DEFG#Iefgh^jklmn%pqr$tuvw(yz012)45-7=+JKLM!OPQ&STUV*XYZabcd';
     var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
+    for (var i = 0; i < length; i++) {
        result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
@@ -41,8 +51,8 @@ app.use(
     session({
         cookieName: 'session',
         secret: 'ytxd76rytff67',
-        duration: 14 * 24 * 3600 * 1000,
-        activeDuration: 14 * 24 * 3600 * 1000,
+        duration: 400 * 24 * 3600 * 1000,
+        activeDuration: 400 * 24 * 3600 * 1000
     })
 ) 
 
@@ -68,18 +78,23 @@ app.use(function(req, res, next) {
 
 app.use('/', routes)
 
-// catch 404 and forward to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found')
     err.status = 404
     next(err)
 })
-
-// error handlers
+ 
 app.use(function(err, req, res, next) {
-    res.status(err.status || 500)
+    if (err.code != "ECONNREFUSED" && (!req.user || !req.user.UserId)) {
+        res.status(401)
+    } else {
+        res.status(err.status || 500)
+    } 
+
     res.end()
-    console.log(err.stack)
+    if (err.stack) {
+        console.log(err.stack)
+    }
 })
 
 

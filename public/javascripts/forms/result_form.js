@@ -8,23 +8,14 @@ class ResultForm extends React.Component {
 
     componentWillMount() {
         if (this.props.location.state.guessStatus == 1) {
-            this.setState({message: 'Correct!', word: 'Score +' + this.props.location.state.score})
+            this.setState({message: 'Correct!', word: 'Score up by ' + this.props.location.state.score})
         } else {
             this.setState({message:"Not quite, this was ", word: this.props.location.state.word.toUpperCase()})
         }
     }
 
     componentDidMount() {
-        let params = "?drawingId="+encodeURIComponent(this.props.location.state.drawingId) 
-        let request = new XMLHttpRequest()
-        request.open('GET', 'comments' + params, false)
-        request.send()
-
-        const commentsList = JSON.parse(request.response)
-
-        if (request.status == 200) {
-            this.setState({...this.state, comments: commentsList})
-        }
+        this.getComments()
     }
 
     onNext() {
@@ -32,15 +23,23 @@ class ResultForm extends React.Component {
 
         let newComment = this.state.newComment
         if (newComment && newComment.length > 0) {
-            var params = JSON.stringify({
-                drawingId: this.props.location.state.drawingId,
-                comment: newComment
-            })
-            var request = new XMLHttpRequest()
-            request.open('POST', 'comment', false)
-            request.setRequestHeader('content-type', 'application/json')
-            request.send(params)
+            this.postComment(newComment)
         }
+    }
+
+    async getComments() {
+        let params = "?drawingId="+encodeURIComponent(this.props.location.state.drawingId) 
+        let response = await getRequest('comments' + params)
+        let commentsList = JSON.parse(response)
+        this.setState({...this.state, comments: commentsList})
+    }
+
+    async postComment(newComment) { 
+        var params = JSON.stringify({
+            drawingId: this.props.location.state.drawingId,
+            comment: encodeURIComponent(newComment)
+        })
+        await postRequest('comment', params) 
     }
 
     onCommentChange(v) {
@@ -51,11 +50,13 @@ class ResultForm extends React.Component {
         let commentsList = []
         for (let i = 0; i < this.state.comments.length; i++) {
             let commentObject = this.state.comments[i]
-            commentsList.push(<li className={"comment"}>{commentObject.userName + ": " +commentObject.comment}</li>)
+
+            let c = decodeURIComponent(commentObject.comment) 
+            commentsList.push(<li className={"comment"} key={commentObject.userName}>{commentObject.userName + ": " + c}</li>)
         }
 
         if (commentsList.length > 0) { 
-            commentsList.unshift(<li className={"commentTitle"}>{"COMMENTS"}</li>)
+            commentsList.unshift(<li className={"commentTitle"} key={"commentTitle"}>{"COMMENTS"}</li>)
         }
 
         return (
@@ -64,7 +65,7 @@ class ResultForm extends React.Component {
                 <p className='resultMessage centeredcontainer'>{this.state.word}</p>
                 <br/><br/><br/>
                 <div className="scrollable" id="comments">
-                    <ul>{commentsList}</ul>
+                    <ul className="scrollable">{commentsList}</ul>
                 </div>
                 <form>
                     <input type="text" className="sketch2 wide" maxLength="64" spellCheck="false"

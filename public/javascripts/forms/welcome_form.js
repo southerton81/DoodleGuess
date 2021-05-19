@@ -5,49 +5,45 @@ class WelcomeForm extends React.Component {
     }
 
     componentDidMount() {
-        let request = new XMLHttpRequest()
-        request.open("GET", "score", false)
-        request.send()
+        this.getScore() 
+        this.getNews()
+    }
 
-        if (request.status != 200) {
-            this.props.history.replace("/l");
-        } else {
-            let responseObject = JSON.parse(request.response)
+    async getScore() {
+        try {
+            let response = await getRequest('score')
+            let responseObject = JSON.parse(response)
             let score = responseObject.GuessScore + responseObject.DrawScore
             let userName = responseObject.UserName
             this.setState({ label: userName, loading: false, score: score })
-        }
-
-        let newsRequest = new XMLHttpRequest()
-        newsRequest.open("GET", "news", false)
-        newsRequest.send()
-
-        if (newsRequest.status == 200) {
-            let newsArray = []
-            JSON.parse(newsRequest.response).map(newsItem => {
-                let date = new Date(newsItem.Timestamp * 1000)
-    
-                date.setMinutes(date.getMinutes() - date.getTimezoneOffset())
-
-
-                newsArray.push(<li className="highscoresitem">{date.toISOString().split('T')[0] + ': ' + newsItem.Text}<p></p></li>)
-            })
-
-            if (newsArray.length > 0) {
-                newsArray.splice(0,0, <p>NEWS</p>)
-            }
-
-            this.setState({ news: newsArray })
+        } catch (status) { 
+            this.props.history.replace("/l")
         }
     }
-    
-    onLogout(event) {
-        var request = new XMLHttpRequest()
-        request.open('POST', 'logout', false)
-        request.send()
 
-        if (request.status == 200) {
-            this.props.history.replace("/l");
+    async getNews() {
+        let response = await getRequest('news')
+
+        let newsArray = []
+        JSON.parse(response).map(newsItem => {
+            let date = new Date(newsItem.Timestamp * 1000)
+            date.setMinutes(date.getMinutes() - date.getTimezoneOffset())
+            newsArray.push(<li className="newsitem">{date.toISOString().split('T')[0] + ': ' + newsItem.Text}</li>)
+        })
+
+        if (newsArray.length > 0) {
+            newsArray.splice(0, 0, <p>NEWS</p>)
+        }
+        this.setState({ news: newsArray })
+    }
+
+    async onLogout(event) {
+        try {
+            let response = await postRequest('logout')
+            this.props.history.replace("/l")
+        } catch (error) {
+            alert('No connection...') 
+            this.props.history.replace("/l")
         }
     }
 

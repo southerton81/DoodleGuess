@@ -85,8 +85,8 @@ class PerlinPen {
                 )
 
                 ctx.lineJoin = ctx.lineCap = 'round'
-                ctx.strokeStyle = '#1569c7'
-                ctx.shadowColor='#1569c7';
+                ctx.strokeStyle = '#FFFFFF'
+                ctx.shadowColor='#FFFFFF';
                 ctx.shadowBlur=3;
                 ctx.beginPath()
                 ctx.moveTo(p0.x, p0.y)

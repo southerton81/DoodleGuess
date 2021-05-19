@@ -3,6 +3,12 @@
     src: url(Guestservice.ttf);
 }
 
+@font-face {
+    font-family: littleThings;
+    src: url(LittleThings-ZX5Z2.ttf);
+}
+
+
 @keyframes selectedAnim {
     50% {
         transform: scale(1.1);
@@ -10,6 +16,7 @@
 }
 
 body {
+    font-display: block;
     font-family: kirbyFont;
     overscroll-behavior: contain;
 }
@@ -38,7 +45,8 @@ body {
 
 .borderedletter {
     /* Adds border to letter */
-    border: 5px solid #1569c7;
+    border: 1px solid #1569c7;
+    border-bottom: 5px solid #1569c7;
     animation: selectedAnim 0.3s ease;
 }
 
@@ -50,11 +58,15 @@ body {
 .comment {
     color: #1569c7;
     margin: 10px 0;
+    font-size: 24px;
+    font-family: littleThings;
 }
 
 .commentTitle {
     color: #1569c7; 
     margin: 15px 0;
+    font-size: 24px;
+    font-family: littleThings;
 }
 
 /* The alert message box */
@@ -78,12 +90,14 @@ body {
     transition: 0.3s;
     font-family: kirbyFont;
 }
+
 /* When moving the mouse over the close button */
 .closebtn:hover {
     color: 1569c7;
 }
 
 canvas {
+    background-color: #1569c7;
     display: block;
     margin-left: auto;
     margin-right: auto;
@@ -92,6 +106,7 @@ canvas {
     border-top-right-radius: 15px 25px;
     border-bottom-right-radius: 25px 195px;
     border-bottom-left-radius: 12px 55px;
+    touch-action: none;
 }
 
 button {
@@ -111,15 +126,10 @@ button {
     background: white;
     margin: 10px;
     outline: none;
-    font-family: kirbyFont;
+    font-family: kirbyFont;   
+    box-shadow: 2px 9px 4px -6px hsla(0, 0%, 0%, 0.15);
 }
-
-button:active {
-    background: white;
-    outline-offset: 5px;
-    outline: 5px solid #1569c7;
-}
-
+ 
 button span {
     position: relative;
     z-index: 2;
@@ -134,7 +144,7 @@ button:after {
     width: 0;
     height: 100%;
     background: #1569c7;
-    transition: all 0.35s;
+    transition: all 0.05s;
 }
 
 button:active {
@@ -268,14 +278,18 @@ input:-webkit-autofill {
     font-size: 26px;
 }
 
+.author {
+    color: #1569c7;
+    font-size: 14px;
+}
+
 .score {
     color: #1569c7;
     font-size: 20px;
-
-    max-width: 320px;
     display: inline-block;
+    max-width: 320px; 
     word-break: break-all; 
-	text-align: left; 
+    text-align: left;  
 }
 
 .resultMessage {
@@ -286,7 +300,6 @@ input:-webkit-autofill {
 .news {
     color: #1569c7;
     font-size: 20px;
-
     max-width: 320px;
     display: inline-block;
     word-break: break-word; 
@@ -310,6 +323,7 @@ form button {
     color: #1569c7;
     display: inline-block;
     word-break: break-word; 
+    text-align: center;
 }
 
 input {
@@ -335,7 +349,9 @@ input {
 
 input.wide {
     width: 300px;
-    height: 30px;
+    height: 32px;
+    font-family: littleThings;
+    font-size: 26px;
 }
 
 ul {
@@ -343,19 +359,33 @@ ul {
     -webkit-padding-start: 0px;
 }
 
-.highscoresitem { 
+.newsitem {   
     margin: 8px 0;
+    font-family: littleThings;
+}
+
+.highscoresitem {    
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
 }
 
 .selecteditem {  
-    padding: 5px 3px;
     background-color: #f7ee71;
+    border-top-left-radius: 105px 15px;
+    border-top-right-radius: 15px 25px;
+    border-bottom-right-radius: 25px 195px;
+    border-bottom-left-radius: 12px 55px;
+
+    padding: 10px;
+    margin: -10px;
 }
 
-div.scrollable { 
+.scrollable { 
     width: 300px;
     height: 200px;
-    overflow: hidden;
+    overflow: auto;
     margin: 0 auto; 
 }
 
