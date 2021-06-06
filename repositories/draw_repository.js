@@ -67,7 +67,9 @@ class DrawRepository {
 
     getRandomDrawing(userId) {
         return this._selectAvailableDrawings(userId)
-            .then(rows => {
+            .then(result => {
+                let rows = result.rowsResult 
+                let updateHistoryFlag = result.shouldUpdateHistoryFlag
                 if (rows != null && rows.length > 0) {
                     let randomRow = Math.round(
                         Math.random() * (rows.length - 1)
@@ -76,25 +78,28 @@ class DrawRepository {
                     let data = rows[randomRow].Data
                     let word = rows[randomRow].Word
                     let userName = rows[randomRow].Name
-                    return new GuessDrawing(drawingId, word, data, userName)
+
+                    let guessDrawing = new GuessDrawing(drawingId, word, data, userName)
+
+                    if (updateHistoryFlag) {
+                        let history = new History(
+                            userId,
+                            guessDrawing.DrawingId,
+                            this.resultDrawingSelected
+                        )
+                        var query = 'INSERT IGNORE INTO HISTORY SET ' + mysql.escape(history)
+                        return DbConnection.runQuery(query).then(rows => {
+                            return guessDrawing
+                        })
+                    } else {
+                        return guessDrawing
+                    }
                 }
                 return Promise.reject(
                     new DatabaseError(
                         'getRandomDrawing: No available drawings found'
                     )
                 )
-            })
-            .then(drawing => {
-                let history = new History(
-                    userId,
-                    drawing.DrawingId,
-                    this.resultDrawingSelected
-                )
-                var query =
-                    'INSERT IGNORE INTO HISTORY SET ' + mysql.escape(history)
-                return DbConnection.runQuery(query).then(rows => {
-                    return Promise.resolve(drawing)
-                })
             })
             .catch(err => {
                 return Promise.reject(err)
@@ -198,11 +203,9 @@ class DrawRepository {
         let querySelectCurrentDrawing =
             'SELECT DRAWINGS.UserId, DrawingId, Data, Word, USER.Name FROM DRAWINGS ' +
             'JOIN USER ON USER.UserId = DRAWINGS.UserId ' +
-            'WHERE DrawingId = (SELECT DrawingId FROM HISTORY WHERE HISTORY.UserId = ' +
-            userId +
-            ' AND HISTORY.Result = ' +
-            this.resultDrawingSelected +
-            ' AND DRAWINGS.Valid >= 0)'
+            'WHERE DrawingId = (SELECT DrawingId FROM HISTORY WHERE HISTORY.UserId = ' + userId +
+            ' AND (HISTORY.Result = ' + this.resultDrawingSelected + ' OR HISTORY.Result = ' + this.resultDrawingHinted + ') ' +
+            ' AND DRAWINGS.Valid >= 0 LIMIT 1)'
 
         /* Select any other users' drawing that's wasn't interacted by me */
         let querySelectNewDrawing =
@@ -217,9 +220,11 @@ class DrawRepository {
 
         return DbConnection.runQuery(querySelectCurrentDrawing).then(rows => {
             if (rows == null || rows.length == 0) {
-                return DbConnection.runQuery(querySelectNewDrawing)
+                return DbConnection.runQuery(querySelectNewDrawing).then( rows => {
+                     return { rowsResult: rows, shouldUpdateHistoryFlag: true } }   
+                )
             }
-            return rows
+            return { rowsResult: rows, shouldUpdateHistoryFlag: false }   
         })
     }
 
@@ -283,7 +288,6 @@ class DrawRepository {
             userId
         )
     }
-
 }
 
 module.exports = DrawRepository

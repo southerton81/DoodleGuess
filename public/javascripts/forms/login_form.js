@@ -12,8 +12,7 @@ class LoginForm extends React.Component {
         }
 
         try {
-            let response = await postRequest('login', 'name=' + encodeURIComponent(this.state.name), 'application/x-www-form-urlencoded')
-            alert('Hi ' + this.state.name)
+            let response = await postRequest('login', 'name=' + encodeURIComponent(this.state.name), 'application/x-www-form-urlencoded') 
             this.props.history.push('/')
         } catch (error) {
             if (error == 401)
@@ -28,20 +27,13 @@ class LoginForm extends React.Component {
         this.setState({name: value})
     }
 
-    onHandleKey(e) {
-        if (e.key == 'Enter') {
-            this.onLogin()
-        }
-    }
-
     render() {
         return (
             <div>
-                <form>
+                <form onSubmit={e => { e.preventDefault(); this.onLogin(); }}>
                     <p className="title">Doodle Guess Game</p>  
                     <p/>
-                    <input autoFocus type="text" className="sketch1" maxLength="20" spellCheck="false" placeholder="nick"
-                        onChange={this.onNameChange} onKeyDown={(e) => this.onHandleKey(e)}/> 
+                    <input autoFocus type="text" className="sketch1" maxLength="20" spellCheck="false" placeholder="nick" onChange={this.onNameChange} /> 
                     <p/>
                     <button type="button" className="sketch1" onClick={() => this.onLogin()}>LOGIN</button>
                 </form>

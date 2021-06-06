@@ -12,7 +12,7 @@ class NewsRepository {
         let guessNewsItems = newGuessesRows.map(row => { 
             let name = row.Name
             let word = row.Word
-            return new NewsItem(row.UNIX_TS, name + " guessed your " + word + " picture, score + 1")
+            return new NewsItem(row.UNIX_TS, name + " guessed your " + word + " picture")
         })
 
         let newCommentsRows = await DbConnection.runQuery(this._getCommentsNewsQuery(userId))
@@ -34,7 +34,7 @@ class NewsRepository {
             'JOIN HISTORY ON HISTORY.DrawingId = DRAWINGS.DrawingId ' +
             'JOIN USER ON USER.UserId = HISTORY.UserId ' +
             
-            'WHERE DRAWINGS.UserId = ' + currentUserId + ' ORDER BY UNIX_TS DESC LIMIT 20;')
+            'WHERE (DRAWINGS.UserId = ' + currentUserId + ' AND History.Result = 1) ORDER BY UNIX_TS DESC LIMIT 20;')
 
         /*
         Find all results from history for CurrentUserId as an author of drawing.
@@ -48,7 +48,6 @@ class NewsRepository {
 
     _getCommentsNewsQuery(currentUserId) {
         return ('SELECT USER.Name, DRAWINGS.Word, COMMENTS.Comment, UNIX_TIMESTAMP(COMMENTS.Timestamp) AS UNIX_TS ' +
-
         'FROM COMMENTS ' +
 
         'JOIN DRAWINGS ON DRAWINGS.DrawingId = COMMENTS.DrawingId ' +

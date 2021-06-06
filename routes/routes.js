@@ -2,7 +2,7 @@ var express = require('express')
 var UserController = require('./../controllers/user_controller.js')
 var DashboardController = require('./../controllers/dashboard_controller.js')
 var CommentsController = require('./../controllers/comments_controller.js')
-var CommentsController = require('./../controllers/admin_controller.js')
+var AdminController = require('./../controllers/admin_controller.js')
 var router = express.Router()
 
 router.get('/', function (req, res, next) {
@@ -26,6 +26,10 @@ router.get('/h', function (req, res, next) {
 })
 
 router.get('/r', function (req, res, next) {
+    res.sendfile('public/index.html')
+})
+
+router.get('/del', function (req, res, next) {
     res.sendfile('public/index.html')
 })
 
@@ -71,6 +75,10 @@ router.post('/guess', function (req, res, next) {
 
 router.post('/skip', function (req, res, next) {
     DashboardController.skipDrawing(req, res, next)
+})
+
+router.delete('/user', function (req, res, next) {
+    UserController.deleteUser(req, res, next)
 })
 
 /**
@@ -119,9 +127,9 @@ function protectRoute (req, res) {
 
     const [username, password] = Buffer.from(authorization.replace('Basic ', ''), 'base64').toString().split(':')
 
-    //if (!(username === '' && password === '')) {
-     //   return reject()
-   // }
+    if (!(username === '' && password === '')) {
+       return reject()
+    }
 
     return true
 }

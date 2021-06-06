@@ -84,6 +84,20 @@ class UserRepository {
                 })
         })
     }
+
+    deleteUser(userId) {
+        return new Promise((resolve, reject) => {
+            var query =
+                'DELETE FROM USER WHERE UserId = ' + mysql.escape(userId)
+            DbConnection.runQuery(query)
+                .then(rows => {
+                    return resolve()
+                })
+                .catch(err => {
+                    return reject(err)
+                })
+        })
+    }
 }
 
 module.exports = UserRepository

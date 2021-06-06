@@ -23,6 +23,8 @@ class RouteComponent extends React.Component {
 
                     <Route exact path="/h" component={HighscoresForm} />
 
+                    <Route exact path="/del" component={DeleteForm} />
+                    
                     <Route exact path="/r" component={ResultForm} />
                 </Switch>
             </Router>

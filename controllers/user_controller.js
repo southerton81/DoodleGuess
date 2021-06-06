@@ -70,4 +70,20 @@ UserController.logout = function(req, res, next) {
     res.end()
 }
 
+UserController.deleteUser = function (req, res, next) {
+    UserController.userRepository()
+        .deleteUser(req.user.UserId)
+        .then(user => {
+            if (req.session) {
+                req.session.destroy()
+            }
+
+            res.status(204)
+            res.end()
+        })
+        .catch(err => {
+            return next(err)
+        })
+}
+
 module.exports = UserController

@@ -5,7 +5,6 @@ var mysql = require('mysql2')
 
 class CommentsRepository {
     constructor() {
-
     }
 
     async getComments(drawingId) {

@@ -1,7 +1,7 @@
 class WelcomeForm extends React.Component {
     constructor(props) {
         super(props)
-        this.state = { label: '', loading: true, score: 'X' }
+        this.state = { label: 'Welcome', loading: true, score: 'X' }
     }
 
     componentDidMount() {
@@ -28,11 +28,12 @@ class WelcomeForm extends React.Component {
         JSON.parse(response).map(newsItem => {
             let date = new Date(newsItem.Timestamp * 1000)
             date.setMinutes(date.getMinutes() - date.getTimezoneOffset())
-            newsArray.push(<li className="newsitem">{date.toISOString().split('T')[0] + ': ' + newsItem.Text}</li>)
+            let dateText = date.toISOString().split('T')[0].replaceAll('-', '.')
+            newsArray.push(<li className="newsitem" key={newsItem.Timestamp}>{dateText + ': ' + newsItem.Text}</li>)
         })
 
         if (newsArray.length > 0) {
-            newsArray.splice(0, 0, <p>NEWS</p>)
+            newsArray.splice(0, 0, <p key={"NEWS"}>NEWS</p>)
         }
         this.setState({ news: newsArray })
     }
@@ -47,6 +48,10 @@ class WelcomeForm extends React.Component {
         }
     }
 
+    onDelete(event) {
+        this.props.history.replace("/del")
+    }
+
     render() {
         return (
             <div id="welcome" className="centeredcontainer">
@@ -57,6 +62,7 @@ class WelcomeForm extends React.Component {
                     <button type="button" className="sketch2" onClick={() => this.props.history.push("/g")}>GUESS</button>
                     <button type="button" className="sketch4" onClick={() => this.props.history.push("/h", { userName: this.state.label })}>SCORES</button>
                     <button type="button" className="sketch3" onClick={() => this.onLogout()}>LOGOUT</button>
+                    <button type="button" className="sketch3" onClick={() => this.onDelete()}>DELETE</button>
                 </form>
 
                 <ul className="news">{this.state.news}</ul>

@@ -121,7 +121,54 @@ class GuessForm extends React.Component {
         }
     }
 
-    render() {
+    hasTouchScreen() {
+        let hasTouchScreen = false
+        if ("maxTouchPoints" in navigator) {
+            hasTouchScreen = navigator.maxTouchPoints > 0
+        } else if ("msMaxTouchPoints" in navigator) {
+            hasTouchScreen = navigator.msMaxTouchPoints > 0
+        } else {
+            var mQ = window.matchMedia && matchMedia("(pointer:coarse)");
+            if (mQ && mQ.media === "(pointer:coarse)") {
+                hasTouchScreen = !!mQ.matches
+            } else if ('orientation' in window) {
+                hasTouchScreen = true
+            } else {
+                var UA = navigator.userAgent;
+                hasTouchScreen = (
+                    /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) ||
+                    /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA)
+                )
+            }
+        }
+    }
+
+    softKeyboard() {
+        let kbd = [[], [], []]
+        let kbdLetters = ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM']
+        for (let i = 0; i < kbdLetters.length; i++) {
+            let line = kbdLetters[i]
+            for (let l = 0; l < line.length; l++) {
+                let letter = line[l]
+                kbd[i].push(<button style={{width: 40, margin: '3px' }} onClick={() => {
+                    this.onKeyDown({ keyCode: letter.charCodeAt(0)})
+                }} key={"kbd" + l}>{letter}</button>)
+            }
+        }
+
+        if (!this.hasTouchScreen()) 
+        return (<div/>)
+
+        return (
+            <div className="centeredcontainer">
+                <p>{kbd[0]}</p>
+                <p>{kbd[1]}</p>
+                <p>{kbd[2]}</p>
+            </div>
+        )
+    }
+
+    placeholders() {
         let letterList = []
         for (let i = 0; i < this.state.lettersCount; i++) {
             let letter = this.state.word[i] || '*'
@@ -133,11 +180,22 @@ class GuessForm extends React.Component {
                 className += "visibleLetter "
             }
 
-            letterList.push(<li className={className} key={i}>{letter}</li>)
+            letterList.push(<li onClick={() => { 
+                this.setState({...this.state, currentLetter: i })
+            }} className={className} key={i}>{letter}</li>)
         }
 
+        return (
+            <div className="centeredcontainer">
+                <ul>{letterList}</ul>
+            </div>
+        )
+    }
+
+    render() {
         let element = (
             <div id="guess" style={{ visibility: this.state.lettersCount != -1 ? 'visible' : 'hidden' }}>
+
                 <div className="topmenucontainer">
                     <button type="button" className="menu" onClick={this.onMenu}>&lt; Menu</button>
                 </div>
@@ -148,13 +206,13 @@ class GuessForm extends React.Component {
                     by {this.state.userName}
                 </div>
 
-                <div className="centeredcontainer">
-                    <ul>{letterList}</ul>
-                </div>
+                {this.placeholders()}
+
+                {this.softKeyboard()}
 
                 <div className="centeredcontainer">
                     <button type="button" className="sketch3" onClick={this.onSkip}>Skip</button>
-                    <button type="button" className="sketch1" onClick={this.onSubmitGuess}>Guess</button>
+                    <button type="button" className="sketch1" onClick={this.onSubmitGuess}>Ready</button>
                 </div>
 
                 <div className="centeredcontainer">

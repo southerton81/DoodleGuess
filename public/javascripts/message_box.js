@@ -4,7 +4,7 @@ class MessageBox {
       this.option = option;
     }
     
-    show(msg, label = "CLOSE") {  
+    show(msg) {  
       let option = this.option;
       let msgboxArea = document.querySelector(this.id);
       let msgboxBox = document.createElement("DIV");

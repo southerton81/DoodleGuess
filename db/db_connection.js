@@ -4,7 +4,7 @@ var fs = require('fs');
 
 var pool = mysql.createPool({
     connectionLimit: 100,
-    host: 'localhost',
+    host: fs.readFileSync('./host').toString(), 
     user: fs.readFileSync('./usr').toString(),
     password: fs.readFileSync('./pwd').toString(),
     database: fs.readFileSync('./dbs').toString(),
