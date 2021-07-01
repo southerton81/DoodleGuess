@@ -4,6 +4,7 @@ var Drawing = require('../models/drawing.js')
 var History = require('../models/history.js')
 var GuessResult = require('../models/guess_result.js')
 var DbConnection = require('../db/db_connection.js')
+var pwdhashing = require('../utils/pwd_hashing.js')
 var mysql = require('mysql2')
 var UserNotFoundError = require('../error/errors.js').UserNotFoundError
 var DatabaseError = require('../error/errors.js').DatabaseError
@@ -13,7 +14,7 @@ var DatabaseError = require('../error/errors.js').DatabaseError
  */
 class UserRepository { 
 
-    findUser(userName) {
+    findUser(userName, password) {
         return new Promise((resolve, reject) => {
             var query =
                 'SELECT * FROM USER WHERE Name = ' + mysql.escape(userName)
@@ -21,8 +22,16 @@ class UserRepository {
                 .then(rows => {
                     if (rows != null && rows.length > 0) {
                         let userId = rows[0].UserId
-                        let name = rows[0].Name
-                        return resolve(new User(userId, name, null))
+                        let userName = rows[0].Name
+                        var storedPassword = rows[0].Password
+
+                        if (storedPassword != null && storedPassword != undefined) {
+                            let hashedUserPassword = pwdhashing(password)
+                            if (hashedUserPassword === storedPassword) {
+                                return resolve(new User(userId, userName))
+                            }
+                            return reject(new AuthError('Wrong password'))
+                        }
                     }
 
                     return reject(new UserNotFoundError())
@@ -72,7 +81,7 @@ class UserRepository {
                         scores = rows.map(row => {
                             let userName = row.Name || ''
                             let guessScore = row.TotalScore || 0
-                            let drawScore = 0 
+                            let drawScore = 0
                             return new Score(userName, guessScore, drawScore)
                         })
                     }

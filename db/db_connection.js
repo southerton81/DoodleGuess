@@ -2,14 +2,20 @@ var mysql = require('mysql2');
 var DatabaseError = require('./../error/errors.js').DatabaseError;
 var fs = require('fs');
 
+let host = fs.readFileSync('./host').toString() 
+let user = fs.readFileSync('./usr').toString()
+let password = fs.readFileSync('./pwd').toString()
+let database = fs.readFileSync('./dbs').toString()
+
 var pool = mysql.createPool({
     connectionLimit: 100,
-    host: fs.readFileSync('./host').toString(), 
-    user: fs.readFileSync('./usr').toString(),
-    password: fs.readFileSync('./pwd').toString(),
-    database: fs.readFileSync('./dbs').toString(),
+    host: host,
+    user: user,
+    password: password,
+    database: database,
     debug: false
 })
+
 
 DbConnection = {}
 
@@ -18,23 +24,23 @@ DbConnection.runQuery = function (args) {
         pool.getConnection(function (err, connection) {
             if (err) {
                 console.log(err)
-                return reject(err);
+                return reject(err)
             }
 
             connection.on('error', function (err) {
                 console.log(err)
-                return reject(err);
-            });
+                return reject(err)
+            })
 
             connection.query(args, function (err, rows) {
-                connection.release();
+                connection.release()
                 if (!err) {
-                    return resolve(rows);
+                    return resolve(rows)
                 } else {
-                    return reject(err);
+                    return reject(err)
                 }
-            });
-        });
+            })
+        })
     })
 }
 
@@ -43,18 +49,18 @@ DbConnection.runQueriesInTransaction = function (...args) {
         pool.getConnection(function (err, connection) {
             if (err) {
                 console.log(err)
-                return reject(err);
+                return reject(err)
             }
 
             connection.on('error', function (err) {
                 console.log(err)
-                return reject(err);
+                return reject(err)
             });
 
             connection.beginTransaction(function (err) {
                 if (err) {
-                    connection.release();
-                    return reject(err);
+                    connection.release()
+                    return reject(err)
                 }
 
                 let queriesCount = args.length - 1
@@ -66,17 +72,17 @@ DbConnection.runQueriesInTransaction = function (...args) {
                             connection.commit(function (err) {
                                 if (err) {
                                     return connection.rollback(function () {
-                                        connection.release();
-                                        return reject(err);
-                                    });
+                                        connection.release()
+                                        return reject(err)
+                                    })
                                 }
-                                connection.release();
-                                return resolve(rows);
+                                connection.release()
+                                return resolve(rows)
                             })
                         } else if (err) {
                             return connection.rollback(function () {
-                                connection.release();
-                                return reject(err);
+                                connection.release()
+                                return reject(err)
                             })
                         } else {
                             execNextQuery(++currentQueryIndex, queriesCount)
@@ -87,7 +93,7 @@ DbConnection.runQueriesInTransaction = function (...args) {
                 if (currentQueryIndex <= queriesCount) {
                     execNextQuery(currentQueryIndex, queriesCount)
                 } else {
-                    return reject(new Error("Empty queries array passed to runQueriesInTransaction() function"));
+                    return reject(new Error("Empty queries array passed to runQueriesInTransaction() function"))
                 }
             })
         })
@@ -95,4 +101,4 @@ DbConnection.runQueriesInTransaction = function (...args) {
 }
 
 
-module.exports = DbConnection;
+module.exports = DbConnection

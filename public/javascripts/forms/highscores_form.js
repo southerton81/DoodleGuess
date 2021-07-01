@@ -18,16 +18,16 @@ class HighscoresForm extends React.Component {
                 let totalScore = score.GuessScore + score.DrawScore
 
                 if (userName === score.UserName) {
-                    scores.push(<li className="highscoresitem selecteditem" key={score.UserName}><p>{score.UserName}</p><p>{totalScore}</p></li>)
+                    scores.push(<li className="highscoresitem selecteditem" key={score.UserName}><p>{score.UserName}</p><p style={{marginLeft: "1em"}}>{totalScore}</p></li>)
                 } else {
-                    scores.push(<li className="highscoresitem" key={score.UserName}><p>{score.UserName}</p><p>{totalScore}</p></li>)
+                    scores.push(<li className="highscoresitem" key={score.UserName}><p>{score.UserName}</p><p style={{marginLeft: "1em"}}>{totalScore}</p></li>)
                 }
             })
 
             this.setState({ ...this.state, highscores: scores, loading: false })
         } catch (status) {
             if (status == 401) {
-                this.props.history.push('/')
+                setPath('/')
                 alert('Please login')
             } else {
                 alert("No connection...")
@@ -39,7 +39,7 @@ class HighscoresForm extends React.Component {
         return (
             <div>
                 <div className="topmenucontainer">
-                    <button type="button" className="menu" onClick={() => this.props.history.goBack()}>&lt; Menu</button>
+                    <button type="button" className="menu" onClick={() => setPath("/")}>&lt; Menu</button>
                 </div>
                 <div className="centeredcontainer" id="highscores">
                     <p className="nick">{'Highscores'}</p>

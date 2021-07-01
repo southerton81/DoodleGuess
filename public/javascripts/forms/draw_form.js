@@ -118,7 +118,7 @@ class DrawForm extends React.Component {
             } else {
                 alert("Error creating new drawing...")
             }
-            this.props.history.push('/')
+            setPath('/')
         }
     }
 
@@ -133,10 +133,10 @@ class DrawForm extends React.Component {
                 let params = JSON.stringify({ drawingId: this.state.drawingId, image: dataUrl })
                 let response = await postRequest('draw', params)
                 alert("Submit successfull")
-                this.props.history.push('/')
+                setPath('/')
             } catch (status) {
                 if (status == 401) {
-                    this.props.history.push('/')
+                    setPath('/')
                     alert('Please login')
                 } else {
                     alert("No connection error...")
@@ -152,7 +152,7 @@ class DrawForm extends React.Component {
     }
 
     onMenu() {
-        this.props.history.replace('/')
+        setPath('/')
     }
 
     render() {

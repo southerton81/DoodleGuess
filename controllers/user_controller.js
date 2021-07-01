@@ -17,9 +17,9 @@ UserController.userRepository = function() {
     return new UserRepository()
 }
 
-UserController.findUser = function(userName, next) {
+UserController.findUser = function(userName, password, next) {
     UserController.userRepository()
-        .findUser(userName)
+        .findUser(userName, password)
         .then(user => {
             return next(null, user)
         })
@@ -28,15 +28,18 @@ UserController.findUser = function(userName, next) {
         })
 }
 
-UserController.login = function(req, res, next) {
-    var name = req.body.name
-    var password = req.cookies.guessDrawCookie
+UserController.login = function(req, res, next) { 
+    let name = req.header('x-user-name')
+    let password = req.header('x-auth-token')
+
+    if (!password) {
+        password = makeid(64)
+    }
 
     UserController.loginRepository()
         .login(name, password)
         .then(user => {
             res.status(200)
-            req.session.userName = name
             res.end()
         })
         .catch(err => {
@@ -44,8 +47,9 @@ UserController.login = function(req, res, next) {
                 return UserController.loginRepository()
                     .register(name, password)
                     .then(user => {
+                        req.user = user
+                        res.json({ token: password })
                         res.status(201)
-                        req.session.userName = name
                         res.end()
                     })
                     .catch(err => {
@@ -62,10 +66,6 @@ UserController.login = function(req, res, next) {
 }
 
 UserController.logout = function(req, res, next) {
-    if (req.session) {
-        req.session.destroy()
-    }
-
     res.status(200)
     res.end()
 }
@@ -74,16 +74,22 @@ UserController.deleteUser = function (req, res, next) {
     UserController.userRepository()
         .deleteUser(req.user.UserId)
         .then(user => {
-            if (req.session) {
-                req.session.destroy()
-            }
-
             res.status(204)
             res.end()
         })
         .catch(err => {
             return next(err)
         })
+}
+
+function makeid(length) {
+    var result           = '';
+    var characters       = '~zAB@DEFG#Iefgh^jklmn%pqr$tuvw(yz012)45-7=+JKLM!OPQ&STUV*XYZabcd';
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
 }
 
 module.exports = UserController

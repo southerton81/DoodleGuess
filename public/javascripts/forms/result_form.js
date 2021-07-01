@@ -19,7 +19,7 @@ class ResultForm extends React.Component {
     }
 
     onNext() {
-        this.props.history.replace("/g")
+        setPath("/g")
 
         let newComment = this.state.newComment
         if (newComment && newComment.length > 0) {

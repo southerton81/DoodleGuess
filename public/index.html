@@ -15,6 +15,11 @@
         <script src="react-router-dom.min.js"></script>
         <script src="babel.min.js"></script>
 
+        <script>
+            let setPath = null
+            let useRouter = false
+        </script>
+
         <script type="text/babel" src="javascripts/engine/requests.js"></script>
         <script type="text/babel" src="javascripts/message_box.js"></script>
         <script type="text/babel" src="javascripts/forms/result_form.js"></script>
@@ -26,7 +31,6 @@
         <script type="text/babel" src="javascripts/forms/guess_form.js"></script>
         <script type="text/babel" src="javascripts/forms/delete_form.js"></script>
         <script type="text/babel" src="javascripts/route_components.js"></script> 
-        <script type="text/babel" src="javascripts/main.js"></script>
 
         <script>
             function alert(msg) {
@@ -36,7 +40,9 @@
     </head>
 
     <body>        
-          <div id="app"></div>
-          <div id="messageDiv" class="messageDiv"></div>
+        <div id="app"></div>
+        <div id="messageDiv" class="messageDiv"></div>
+
+        <script type="text/babel" src="javascripts/main.js"></script>
     </body>
 </html>

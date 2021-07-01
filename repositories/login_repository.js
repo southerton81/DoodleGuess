@@ -8,19 +8,15 @@ var UserNotFoundError = require('../error/errors.js').UserNotFoundError
 class LoginRepository {
     login(userName, userPassword) {
         return new Promise((resolve, reject) => {
-            var query =
-             'SELECT * FROM USER WHERE Name = ' + mysql.escape(userName)
+            var query = 'SELECT * FROM USER WHERE Name = ' + mysql.escape(userName)
             DbConnection.runQuery(query)
                 .then(rows => {
                     if (rows != null && rows.length > 0) {
                         var storedPassword = rows[0].Password
-                        if (
-                            storedPassword != null &&
-                            storedPassword != undefined
-                        ) {
+                        if (storedPassword != null && storedPassword != undefined) {
                             let hashedUserPassword = pwdhashing(userPassword)
                             if (hashedUserPassword === storedPassword) {
-                                return resolve(new User(null, userName, userPassword))
+                                return resolve(new User(null, userName))
                             }
                             return reject(new AuthError('Wrong password'))
                         }

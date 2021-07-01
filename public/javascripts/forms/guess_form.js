@@ -45,7 +45,7 @@ class GuessForm extends React.Component {
             let response = await getRequest('guess')
             this.showDrawing(response)
         } catch (status) {
-            this.props.history.push('/')
+            setPath('/')
             if (status == 401) {
                 alert('Please login')
             } else {
@@ -61,7 +61,7 @@ class GuessForm extends React.Component {
             }))
             this.showDrawing(response)
         } catch (error) {
-            this.props.history.replace('/')
+            setPath('/')
             alert('Sorry, no more drawings available')
         }
     }
@@ -73,7 +73,7 @@ class GuessForm extends React.Component {
                 drawingId: this.state.drawingId
             }))
             const guessResult = JSON.parse(response).result
-            this.props.history.replace("/r", {
+            setPath("/r", {
                 guessStatus: guessResult.GuessStatus,
                 word: guessResult.Word,
                 score: guessResult.Score,
@@ -96,7 +96,7 @@ class GuessForm extends React.Component {
     }
 
     onMenu() {
-        this.props.history.replace('/')
+        setPath('/')
     }
 
     showDrawing(response) {

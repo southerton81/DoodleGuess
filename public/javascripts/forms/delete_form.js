@@ -6,7 +6,7 @@ class DeleteForm extends React.Component {
     async onDeleteAccount() {
         try {
             let response = await deleteRequest('user')
-            this.props.history.replace("/l")
+            setPath("/l")
             alert('Your account was deleted')
         } catch (status) {
             alert('Request failed, please check connection')
@@ -24,7 +24,7 @@ class DeleteForm extends React.Component {
                 </div>
 
                 <div className="centeredcontainer">
-                    <button type="button" className="sketch1" onClick={() => this.props.history.replace('/')}>Cancel</button>
+                    <button type="button" className="sketch1" onClick={() => setPath('/')}>Cancel</button>
                     <button type="button" className="sketch3" onClick={() => this.onDeleteAccount()}>Delete</button> 
                 </div>
             </div>

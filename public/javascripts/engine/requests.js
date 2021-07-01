@@ -1,7 +1,11 @@
+let serverUrl = "https://sketch-guesser.herokuapp.com/"
+
 function getRequest(url) {
     return new Promise(function (resolve, reject) {
         var xhr = new XMLHttpRequest()
         xhr.open('GET', url, true)
+        addAuth(xhr)
+        
         xhr.onload = function () {
             var status = xhr.status
             if (status == 200) {
@@ -19,7 +23,8 @@ function postRequest(url, params, header) {
         var xhr = new XMLHttpRequest()
         xhr.open('POST', url, true)
         xhr.setRequestHeader('content-type', header || 'application/json')
-
+        addAuth(xhr)
+    
         xhr.onreadystatechange = function () {
             if (xhr.readyState == XMLHttpRequest.DONE && (xhr.status >= 200 && xhr.status <= 226)) {
                 resolve(xhr.response)
@@ -37,7 +42,8 @@ function deleteRequest(url, params, header) {
         var xhr = new XMLHttpRequest()
         xhr.open('DELETE', url, true)
         xhr.setRequestHeader('content-type', header || 'application/json')
-
+        addAuth(xhr)
+    
         xhr.onreadystatechange = function () {
             if (xhr.readyState == XMLHttpRequest.DONE && (xhr.status >= 200 && xhr.status <= 226)) {
                 resolve(xhr.response)
@@ -48,4 +54,13 @@ function deleteRequest(url, params, header) {
 
         xhr.send(params)
     })
+}
+
+function addAuth(xhr) {
+    let name = window.localStorage.getItem('name')
+    let token = window.localStorage.getItem('t')
+    xhr.setRequestHeader('x-user-name', encodeURIComponent(name))
+    if (token) {
+        xhr.setRequestHeader('x-auth-token', token)
+    }
 }
