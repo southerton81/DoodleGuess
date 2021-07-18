@@ -2,10 +2,10 @@ var mysql = require('mysql2');
 var DatabaseError = require('./../error/errors.js').DatabaseError;
 var fs = require('fs');
 
-let host = fs.readFileSync('./host').toString() 
-let user = fs.readFileSync('./usr').toString()
-let password = fs.readFileSync('./pwd').toString()
-let database = fs.readFileSync('./dbs').toString()
+let host = fs.readFileSync('./config/host').toString() 
+let user = fs.readFileSync('./config/usr').toString()
+let password = fs.readFileSync('./config/pwd').toString()
+let database = fs.readFileSync('./config/dbs').toString()
 
 var pool = mysql.createPool({
     connectionLimit: 100,

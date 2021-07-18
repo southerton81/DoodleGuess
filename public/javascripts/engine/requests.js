@@ -3,7 +3,7 @@ let serverUrl = "https://sketch-guesser.herokuapp.com/"
 function getRequest(url) {
     return new Promise(function (resolve, reject) {
         var xhr = new XMLHttpRequest()
-        xhr.open('GET', url, true)
+        xhr.open('GET', serverUrl + url, true)
         addAuth(xhr)
         
         xhr.onload = function () {
@@ -21,7 +21,7 @@ function getRequest(url) {
 function postRequest(url, params, header) {
     return new Promise(function (resolve, reject) {
         var xhr = new XMLHttpRequest()
-        xhr.open('POST', url, true)
+        xhr.open('POST', serverUrl + url, true)
         xhr.setRequestHeader('content-type', header || 'application/json')
         addAuth(xhr)
     
@@ -40,7 +40,7 @@ function postRequest(url, params, header) {
 function deleteRequest(url, params, header) {
     return new Promise(function (resolve, reject) {
         var xhr = new XMLHttpRequest()
-        xhr.open('DELETE', url, true)
+        xhr.open('DELETE', serverUrl + url, true)
         xhr.setRequestHeader('content-type', header || 'application/json')
         addAuth(xhr)
     

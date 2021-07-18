@@ -1,7 +1,7 @@
 var crypto = require('crypto');
 var fs = require('fs');
 
-var salt = fs.readFileSync('./salt').toString();
+var salt = fs.readFileSync('config/salt').toString();
 
 var hashPassword = function(password) {
     const key = crypto.pbkdf2Sync(password, salt, 100000, 128, 'sha512');

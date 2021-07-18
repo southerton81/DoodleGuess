@@ -128,6 +128,13 @@ button {
     outline: none;
     font-family: kirbyFont;   
     box-shadow: 2px 9px 4px -6px hsla(0, 0%, 0%, 0.15);
+
+    user-select: none; /* supported by Chrome and Opera */
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
 }
  
 button span {
@@ -271,16 +278,22 @@ input:-webkit-autofill {
 .drawWord {
     color: #1569c7;
     font-size: 40px;
+    cursor: default;
+    caret-color: transparent;
 }
 
 .nick {
     color: #1569c7;
     font-size: 26px;
+    cursor: default;
+    caret-color: transparent;
 }
 
 .author {
     color: #1569c7;
     font-size: 14px;
+    cursor: default;
+    caret-color: transparent;
 }
 
 .score {
@@ -290,11 +303,15 @@ input:-webkit-autofill {
     max-width: 320px; 
     word-break: break-all; 
     text-align: left;  
+    cursor: default;
+    caret-color: transparent;
 }
 
 .resultMessage {
     color: #1569c7;
     font-size: 20px;
+    cursor: default;
+    caret-color: transparent;
 }
 
 .news {
@@ -304,6 +321,7 @@ input:-webkit-autofill {
     display: inline-block;
     word-break: break-word; 
 	text-align: left; 
+    cursor: default;
 }
 
 form {
@@ -324,7 +342,9 @@ form button {
     display: inline-block;
     word-break: break-word; 
     text-align: center;
-}
+    cursor: default;
+    caret-color: transparent;
+} 
 
 input {
     background-color: white;
@@ -399,4 +419,4 @@ ul {
   left: 0;
   right: 0;
   z-index: 10; 
-}
+} 
