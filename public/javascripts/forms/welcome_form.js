@@ -45,7 +45,11 @@ class WelcomeForm extends React.Component {
 
       if (newsArray.length > 0) {
         newsArray.splice(0, 0, <p key={"NEWS"}>NEWS</p>)
+      } else {
+        newsArray.push(<p key={"NEWS"}>NEWS</p>) 
+        newsArray.push(<li className="newsitem" key={'EmptyNewsKey'}>{'Comments and guesses for your drawings would be listed here...'}</li>)
       }
+
       this.setState({ news: newsArray })
     } catch (status) {
       setPath("/l")
