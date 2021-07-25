@@ -40,7 +40,8 @@ class WelcomeForm extends React.Component {
         let date = new Date(newsItem.Timestamp * 1000)
         date.setMinutes(date.getMinutes() - date.getTimezoneOffset())
         let dateText = date.toISOString().split('T')[0].replaceAll('-', '.')
-        newsArray.push(<li className="newsitem" key={newsItem.Timestamp}>{dateText + ': ' + newsItem.Text}</li>)
+        let text = decodeURIComponent(newsItem.Text)
+        newsArray.push(<li className="newsitem" key={newsItem.Timestamp}>{dateText + ': ' + text}</li>)
       })
 
       if (newsArray.length > 0) {

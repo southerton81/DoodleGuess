@@ -150,14 +150,15 @@ class GuessForm extends React.Component {
             let line = kbdLetters[i]
             for (let l = 0; l < line.length; l++) {
                 let letter = line[l]
-                kbd[i].push(<button style={{width: 40, margin: '3px' }} onClick={() => {
+                kbd[i].push(<button style={{width: 30, height:40, fontSize: '14px', margin: '3px' }} onClick={() => {
                     this.onKeyDown({ keyCode: letter.charCodeAt(0)})
                 }} key={"kbd" + l}>{letter}</button>)
             }
         }
 
-        if (!this.hasTouchScreen()) 
-        return (<div/>)
+//Not reliable!
+//        if (!this.hasTouchScreen()) 
+//        return (<div/>)
 
         return (
             <div className="centeredcontainer">
