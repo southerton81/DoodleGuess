@@ -25,11 +25,11 @@ DashboardController._getRandomWord = function () {
                 }
                 stringArray = data.split(/\n/)
                 let index = Math.round(Math.random() * (stringArray.length - 1))
-                return resolve(stringArray[index])
+                return resolve(stringArray[index].trim())
             })
         } else {
             let index = Math.round(Math.random() * (stringArray.length - 1))
-            return resolve(stringArray[index])
+            return resolve(stringArray[index].trim())
         }
     })
 }

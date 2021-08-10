@@ -335,6 +335,17 @@ form button {
     margin: 10px auto;
 }
 
+.resultinputs {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding-top: 20px;
+}
+
+.resultinputs button {
+    margin: 10px auto;
+}
+
 .title {
     font-size: 32px;
     margin: 10px auto;

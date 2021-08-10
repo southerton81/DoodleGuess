@@ -67,13 +67,13 @@ class ResultForm extends React.Component {
                 <div className="scrollable" id="comments">
                     <ul className="scrollable">{commentsList}</ul>
                 </div>
-                <form>
+               
+               <div className='resultinputs'>
                     <input type="text" className="sketch2 wide" maxLength="64" spellCheck="false"
                         placeholder="Comment?" onChange={this.onCommentChange}/> 
-                </form>
-                <form>
                     <button type="button" className="sketch1" onClick={()=>this.onNext()}>NEXT</button>  
-                </form>
+                </div>
+
             </div>
         )
     }

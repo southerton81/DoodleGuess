@@ -76,7 +76,7 @@ class DrawRepository {
                     )
                     let drawingId = rows[randomRow].DrawingId
                     let data = rows[randomRow].Data
-                    let word = rows[randomRow].Word
+                    let word = rows[randomRow].Word.trim()
                     let userName = rows[randomRow].Name
 
                     let guessDrawing = new GuessDrawing(drawingId, word, data, userName)
@@ -109,7 +109,7 @@ class DrawRepository {
     getHint(userId, drawingId) {
         return DbConnection.runQuery(this._getCorrectWordQuery(drawingId))
             .then(rows => {
-                let word = rows[0].Word
+                let word = rows[0].Word.trim()
 
                 return DbConnection.runQuery(
                     this._updateHistoryWithResultQuery(
