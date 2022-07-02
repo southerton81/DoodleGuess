@@ -1,7 +1,7 @@
 class GuessForm extends React.Component {
     constructor(props) {
         super(props)
-        this.state = { lettersCount: -1, currentLetter: -1, word: [], drawingId: null, userName: "" }
+        this.state = { lettersCount: -1, currentLetter: -1, word: [], drawingId: null, userName: "", loading: true }
         this.onSkip = this.onSkip.bind(this)
         this.onSubmitGuess = this.onSubmitGuess.bind(this)
         this.onKeyDown = this.onKeyDown.bind(this)
@@ -116,7 +116,8 @@ class GuessForm extends React.Component {
                 currentLetter: 0,
                 word: Array(wordLength),
                 drawingId: drawingId,
-                userName: userName
+                userName: userName,
+                loading: false
             })
         }
     }
@@ -193,33 +194,41 @@ class GuessForm extends React.Component {
         )
     }
 
-    render() {
+    render() { 
         let element = (
-            <div id="guess" style={{ visibility: this.state.lettersCount != -1 ? 'visible' : 'hidden' }}>
+            <div>
+                 <div className="topmenucontainer">
+                        <button type="button" className="menu" onClick={this.onMenu}>&lt; Menu</button>
+                    </div>
 
-                <div className="topmenucontainer">
-                    <button type="button" className="menu" onClick={this.onMenu}>&lt; Menu</button>
+                <div className="centeredcontainer drawWord progressAnimation" style={{ display: this.state.loading ? 'block' : 'none' }}>
+                    <br/><br/>
+                    {'. . .'}
                 </div>
 
-                <canvas ref="canvas" width="300" height="320"></canvas>
+                <div id="guess" style={{ visibility: this.state.lettersCount != -1 ? 'visible' : 'hidden' }}>
 
-                <div className="centeredcontainer author">
-                    by {this.state.userName}
-                </div>
+                    <canvas ref="canvas" width="300" height="320"></canvas>
 
-                {this.placeholders()}
+                    <div className="centeredcontainer author">
+                        by {this.state.userName}
+                    </div>
 
-                {this.softKeyboard()}
+                    {this.placeholders()}
 
-                <div className="centeredcontainer">
-                    <button type="button" className="sketch3" onClick={this.onSkip}>Skip</button>
-                    <button type="button" className="sketch1" onClick={this.onSubmitGuess}>Ready</button>
-                </div>
+                    {this.softKeyboard()}
 
-                <div className="centeredcontainer">
-                    <button type="button" className="sketch2" onClick={this.onHint}>Hint</button>
+                    <div className="centeredcontainer">
+                        <button type="button" className="sketch3" onClick={this.onSkip}>Skip</button>
+                        <button type="button" className="sketch1" onClick={this.onSubmitGuess}>Ready</button>
+                    </div>
+
+                    <div className="centeredcontainer">
+                        <button type="button" className="sketch2" onClick={this.onHint}>Hint</button>
+                    </div>
                 </div>
             </div>
+            
         )
         return element
     }

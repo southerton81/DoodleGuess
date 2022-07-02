@@ -194,6 +194,13 @@ button.sketch4 {
     border-bottom-left-radius: 12px 55px;
 }
 
+button.sketch5 {
+    border-top-left-radius: 195px 15px;
+    border-top-right-radius: 15px 25px;
+    border-bottom-right-radius: 25px 125px;
+    border-bottom-left-radius: 12px 155px;
+}
+
 input.sketch1 {
     border-top-left-radius: 105px 15px;
     border-top-right-radius: 15px 25px;
@@ -431,3 +438,13 @@ ul {
   right: 0;
   z-index: 10; 
 } 
+
+.progressAnimation {
+    animation: blinker 1s linear infinite;
+  }
+  
+  @keyframes blinker {
+    50% {
+      opacity: 0.5;
+    }
+  }

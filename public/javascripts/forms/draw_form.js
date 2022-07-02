@@ -2,7 +2,7 @@
 class DrawForm extends React.Component {
     constructor(props) {
         super(props)
-        this.state = { wordLabel: '', inkLeft: 100 }
+        this.state = { wordLabel: '. . .', inkLeft: 100, showProgress: true }
     }
 
     componentDidMount() {
@@ -111,7 +111,7 @@ class DrawForm extends React.Component {
         try {
             let response = await postRequest('createDrawing', null)
             const drawing = JSON.parse(response)
-            this.setState({ wordLabel: drawing.Word, drawingId: drawing.DrawingId })
+            this.setState({ wordLabel: drawing.Word, drawingId: drawing.DrawingId, showProgress: false })
         } catch (status) {
             if (status == 401) {
                 alert('Please login')
@@ -128,12 +128,14 @@ class DrawForm extends React.Component {
 
         if (this.state.inkLeft == 100) {
             alert("Drawing is empty")
+        } else if (this.state.showProgress) {
+            // empty
         } else {
             try {
                 let params = JSON.stringify({ drawingId: this.state.drawingId, image: dataUrl })
                 let response = await postRequest('draw', params)
                 alert("Submit successfull")
-                setPath('/')
+                this.setupNewWordToDraw()
             } catch (status) {
                 if (status == 401) {
                     setPath('/')
@@ -143,6 +145,16 @@ class DrawForm extends React.Component {
                 }
             }
         }
+    }
+
+    onSkipWord() {
+        this.setupNewWordToDraw()
+    }
+
+    setupNewWordToDraw() {
+        this.state = { wordLabel: '. . .', inkLeft: 100, showProgress: true }
+        this.onClear()
+        this.createDrawing()
     }
 
     onClear(event) {
@@ -159,12 +171,17 @@ class DrawForm extends React.Component {
         const inkProgressStyle = {
             width: this.state.inkLeft + '%'
         }
+        let wordLabelStyle = "centeredcontainer drawWord"
+        if (this.state.showProgress) {
+            wordLabelStyle += " progressAnimation"
+        }
+        
         return (
             <div id="draw">
                 <div className="topmenucontainer">
                     <button type="button" className="menu" onClick={this.onMenu.bind(this)}>&lt; Menu</button>
                 </div>
-                <div className="centeredcontainer drawWord">{this.state.wordLabel}</div>
+                <div className={wordLabelStyle}>{this.state.wordLabel}</div>
                 <p />
                 <canvas ref="canvas" width="300" height="320"></canvas>
                 <p />
@@ -181,6 +198,10 @@ class DrawForm extends React.Component {
                 <div className="centeredcontainer">
                     <button type="button" className="sketch2 centeredchild" onClick={this.onClear.bind(this)}>CLEAR</button>
                     <button type="button" className="sketch1 centeredchild" onClick={this.onSubmit.bind(this)}>SUBMIT</button>
+                </div>
+
+                <div className="centeredcontainer">
+                    <button type="button" className="sketch4" onClick={this.onSkipWord.bind(this)}>SKIP</button>
                 </div>
             </div>
         )

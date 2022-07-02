@@ -35,16 +35,20 @@ class HighscoresForm extends React.Component {
         }
     }
 
-    render() {
+    render() { 
         return (
             <div>
                 <div className="topmenucontainer">
                     <button type="button" className="menu" onClick={() => setPath("/")}>&lt; Menu</button>
                 </div>
+
                 <div className="centeredcontainer" id="highscores">
                     <p className="nick">{'Highscores'}</p>
                     <ul className="score">{this.state.highscores}</ul>
                 </div>
+
+                <div className="centeredcontainer drawWord progressAnimation" style={{ visibility: this.state.loading ? 'visible' : 'hidden' }}>{'. . .'}</div>
+
             </div>
         )
     }

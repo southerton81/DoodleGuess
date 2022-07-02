@@ -127,9 +127,9 @@ class DrawRepository {
     setGuess(userId, drawingId, guessWord) {
         return DbConnection.runQuery(this._getCorrectWordQuery(drawingId))
             .then(rows => {
-                let word = rows[0].Word
+                let word = rows[0].Word.trim()
                 let isGuessed =
-                    guessWord.toLowerCase().localeCompare(word.toLowerCase()) ==
+                    guessWord.toLowerCase().trim().localeCompare(word.toLowerCase()) ==
                         0
                         ? true
                         : false

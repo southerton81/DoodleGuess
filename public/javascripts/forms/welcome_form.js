@@ -82,7 +82,7 @@ class WelcomeForm extends React.Component {
           <button type="button" className="sketch2" onClick={() => setPath("/g")}>GUESS</button>
           <button type="button" className="sketch4" onClick={() => setPath("/h", { userName: this.state.label })}>SCORES</button>
           <button type="button" className="sketch3" onClick={() => this.onLogout()}>LOGOUT</button>
-          <button type="button" className="sketch3" onClick={() => this.onDelete()}>DELETE</button>
+          <button type="button" className="sketch5" onClick={() => this.onDelete()}>DELETE</button>
         </form>
 
         <ul className="news">{this.state.news}</ul>
