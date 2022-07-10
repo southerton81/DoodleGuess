@@ -1,4 +1,4 @@
-let serverUrl = "https://sketch-guesser.herokuapp.com/"
+let serverUrl = "http://localhost:3000/"
 
 function getRequest(url) {
     return new Promise(function (resolve, reject) {

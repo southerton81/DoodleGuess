@@ -5,6 +5,8 @@ var CommentsController = require('./../controllers/comments_controller.js')
 var AdminController = require('./../controllers/admin_controller.js')
 var router = express.Router()
 
+let adminPassword = fs.readFileSync('./config/adminpwd').toString()
+
 router.get('/', function (req, res, next) {
     res.sendfile('public/index.html')
 })
@@ -94,5 +96,44 @@ router.post('/createDrawing', function (req, res, next) {
 router.post('/draw', function (req, res, next) {
     DashboardController.saveDrawing(req, res, next)
 })
+
+/**
+ * Admin requests
+ */
+router.get('/adminNextDrawing', function (req, res, next) {
+    if (protectRoute(req, res)) {
+        AdminController.validateNext(req, res, next)
+    }
+})
+
+router.post('/drawingValidity', function (req, res, next) {
+    if (protectRoute(req, res)) {
+        AdminController.drawingValidity(req, res, next)
+    }
+})
+
+
+/* Utility */
+function protectRoute (req, res) {
+    const reject = () => {
+        res.setHeader('www-authenticate', 'Basic')
+        res.sendStatus(401)
+        return false
+    }
+
+    const authorization = req.headers.authorization
+
+    if (!authorization) {
+        return reject()
+    }
+
+    const [username, password] = Buffer.from(authorization.replace('Basic ', ''), 'base64').toString().split(':')
+
+    if (!(username === '' && password === adminPassword)) {
+       return reject()
+    }
+
+    return true
+}
 
 module.exports = router
