@@ -1,11 +1,11 @@
 @font-face {
-    font-family: kirbyFont;
+    font-family: largeFont;
     src: url(Guestservice.ttf);
 }
 
 @font-face {
-    font-family: littleThings;
-    src: url(LittleThings-ZX5Z2.ttf);
+    font-family: smallFont;
+    src: url(bBasicDrawing.ttf);
 }
 
 
@@ -17,7 +17,7 @@
 
 body {
     font-display: block;
-    font-family: kirbyFont;
+    font-family: largeFont;
     overscroll-behavior: contain;
 }
 
@@ -33,7 +33,7 @@ body {
     text-transform: uppercase;
     min-width: 26px;
     text-align: center;
-    font-family: kirbyFont;
+    font-family: largeFont;
 
     -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
@@ -59,14 +59,14 @@ body {
     color: #1569c7;
     margin: 10px 0;
     font-size: 24px;
-    font-family: littleThings;
+    font-family: smallFont;
 }
 
 .commentTitle {
     color: #1569c7; 
     margin: 15px 0;
     font-size: 24px;
-    font-family: littleThings;
+    font-family: smallFont;
 }
 
 /* The alert message box */
@@ -75,7 +75,7 @@ body {
     background-color: #1569c7;
     color: white;
     margin-bottom: 5px;
-    font-family: kirbyFont;
+    font-family: largeFont;
 }
 
 /* The close button */
@@ -88,7 +88,7 @@ body {
     line-height: 20px;
     cursor: pointer;
     transition: 0.3s;
-    font-family: kirbyFont;
+    font-family: largeFont;
 }
 
 /* When moving the mouse over the close button */
@@ -126,7 +126,7 @@ button {
     background: white;
     margin: 10px;
     outline: none;
-    font-family: kirbyFont;   
+    font-family: largeFont;   
     box-shadow: 2px 9px 4px -6px hsla(0, 0%, 0%, 0.15);
 
     user-select: none; /* supported by Chrome and Opera */
@@ -382,13 +382,13 @@ input {
     background: white;
     margin: 10px auto;
     outline: none;
-    font-family: kirbyFont;
+    font-family: largeFont;
 }
 
 input.wide {
     width: 300px;
     height: 32px;
-    font-family: littleThings;
+    font-family: smallFont;
     font-size: 26px;
 }
 
@@ -399,7 +399,7 @@ ul {
 
 .newsitem {   
     margin: 8px 0;
-    font-family: littleThings;
+    font-family: smallFont;
 }
 
 .highscoresitem {    
