@@ -109,8 +109,10 @@ router.post('/drawingValidity', function (req, res, next) {
         AdminController.drawingValidity(req, res, next)
     }
 })
- 
 
+let fs = require('fs');
+let adminPwd = fs.readFileSync('./config/adminPwd').toString() 
+ 
 /* Utility */
 function protectRoute (req, res) {
     const reject = () => {
@@ -127,7 +129,7 @@ function protectRoute (req, res) {
 
     const [username, password] = Buffer.from(authorization.replace('Basic ', ''), 'base64').toString().split(':')
 
-    if (!(username === '' && password === '')) {
+    if (!(username === '' && password === adminPwd)) {
        return reject()
     }
 
