@@ -1,9 +1,12 @@
 var express = require('express')
+let fs = require('fs')
 var UserController = require('./../controllers/user_controller.js')
 var DashboardController = require('./../controllers/dashboard_controller.js')
 var CommentsController = require('./../controllers/comments_controller.js')
 var AdminController = require('./../controllers/admin_controller.js')
 var router = express.Router()
+
+let adminPwd = fs.readFileSync('./config/adminPwd').toString() 
 
 router.get('/', function (req, res, next) {
     res.sendfile('public/index.html')
@@ -109,9 +112,6 @@ router.post('/drawingValidity', function (req, res, next) {
         AdminController.drawingValidity(req, res, next)
     }
 })
-
-let fs = require('fs');
-let adminPwd = fs.readFileSync('./config/adminPwd').toString() 
  
 /* Utility */
 function protectRoute (req, res) {
