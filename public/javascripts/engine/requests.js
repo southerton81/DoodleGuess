@@ -1,4 +1,4 @@
-let serverUrl = "https://sketch-guesser.herokuapp.com/"
+let serverUrl = "https://doodle-guesser.lm.r.appspot.com/"
 
 function getRequest(url) {
     return new Promise(function (resolve, reject) {
