@@ -41,17 +41,17 @@ class AdminRepository {
 
     _selectNonValidDrawing() {
         return (
-            'SELECT DRAWINGS.UserId, DrawingId, Data, Word, USER.Name FROM DRAWINGS ' +
-            'JOIN USER ON USER.UserId = DRAWINGS.UserId ' +
-            'WHERE DRAWINGS.Valid = 0 LIMIT 1'
+            'SELECT drawings.UserId, DrawingId, Data, Word, user.Name FROM drawings ' +
+            'JOIN user ON user.UserId = drawings.UserId ' +
+            'WHERE drawings.Valid = 0 LIMIT 1'
         )
     }
 
     _updateDrawingValidity(drawingId, validity) {
         return (
-            'UPDATE DRAWINGS SET DRAWINGS.Valid = ' +
+            'UPDATE drawings SET drawings.Valid = ' +
             validity +
-            ' WHERE DRAWINGS.DrawingId = ' +
+            ' WHERE drawings.DrawingId = ' +
             drawingId  
         )
     }

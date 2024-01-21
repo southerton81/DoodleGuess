@@ -8,7 +8,7 @@ var DbConnection = require('../db/db_connection.js')
 var mysql = require('mysql2')
 var UserNotFoundError = require('../error/errors.js').UserNotFoundError
 var DatabaseError = require('../error/errors.js').DatabaseError
- 
+
 
 class DrawRepository {
     constructor() {
@@ -22,17 +22,17 @@ class DrawRepository {
     createEmptyDrawingWithWord(userId, word) {
         return new Promise((resolve, reject) => {
             let drawing = new Drawing(null, userId, word, null)
-            var query = 'INSERT INTO DRAWINGS SET ' + mysql.escape(drawing)
+            var query = 'INSERT INTO drawings SET ' + mysql.escape(drawing)
 
             DbConnection.runQuery(query)
                 .then(rows => {
                     let getDrawingIdQuery =
-                        'SELECT * FROM DRAWINGS WHERE DRAWINGS.UserId = ' +
+                        'SELECT * FROM drawings WHERE drawings.UserId = ' +
                         mysql.escape(userId) +
-                        " AND DRAWINGS.Word = '" +
+                        " AND drawings.Word = '" +
                         word +
                         "'" +
-                        ' AND DRAWINGS.Data IS NULL LIMIT 1'
+                        ' AND drawings.Data IS NULL LIMIT 1'
 
                     return DbConnection.runQuery(getDrawingIdQuery)
                 })
@@ -50,9 +50,9 @@ class DrawRepository {
     putUserDrawing(drawingId, data) {
         return new Promise((resolve, reject) => {
             var query =
-                'UPDATE DRAWINGS SET DRAWINGS.Data = ' +
+                'UPDATE drawings SET drawings.Data = ' +
                 mysql.escape(data) +
-                ' WHERE DRAWINGS.DrawingId = ' +
+                ' WHERE drawings.DrawingId = ' +
                 drawingId
 
             DbConnection.runQuery(query)
@@ -68,7 +68,7 @@ class DrawRepository {
     getRandomDrawing(userId) {
         return this._selectAvailableDrawings(userId)
             .then(result => {
-                let rows = result.rowsResult 
+                let rows = result.rowsResult
                 let updateHistoryFlag = result.shouldUpdateHistoryFlag
                 if (rows != null && rows.length > 0) {
                     let randomRow = Math.round(
@@ -87,7 +87,7 @@ class DrawRepository {
                             guessDrawing.DrawingId,
                             this.resultDrawingSelected
                         )
-                        var query = 'INSERT IGNORE INTO HISTORY SET ' + mysql.escape(history)
+                        var query = 'INSERT IGNORE INTO history SET ' + mysql.escape(history)
                         return DbConnection.runQuery(query).then(rows => {
                             return guessDrawing
                         })
@@ -201,38 +201,39 @@ class DrawRepository {
 
     _selectAvailableDrawings(userId) {
         let querySelectCurrentDrawing =
-            'SELECT DRAWINGS.UserId, DrawingId, Data, Word, USER.Name FROM DRAWINGS ' +
-            'JOIN USER ON USER.UserId = DRAWINGS.UserId ' +
-            'WHERE DrawingId = (SELECT DrawingId FROM HISTORY WHERE HISTORY.UserId = ' + userId +
-            ' AND (HISTORY.Result = ' + this.resultDrawingSelected + ' OR HISTORY.Result = ' + this.resultDrawingHinted + ') ' +
-            ' AND DRAWINGS.Valid >= 0 LIMIT 1)'
+            'SELECT drawings.UserId, DrawingId, Data, Word, user.Name FROM drawings ' +
+            'JOIN user ON user.UserId = drawings.UserId ' +
+            'WHERE DrawingId = (SELECT DrawingId FROM history WHERE history.UserId = ' + userId +
+            ' AND (history.Result = ' + this.resultDrawingSelected + ' OR history.Result = ' + this.resultDrawingHinted + ') ' +
+            ' AND drawings.Valid >= 0 LIMIT 1)'
 
         /* Select any other users' drawing that's wasn't interacted by me */
         let querySelectNewDrawing =
-            'SELECT DRAWINGS.UserId, DrawingId, Data, Word, USER.Name FROM DRAWINGS ' +
-            'JOIN USER ON USER.UserId = DRAWINGS.UserId ' +
-            'WHERE DrawingId NOT IN (SELECT DrawingId FROM HISTORY WHERE HISTORY.UserId = ' +
+            'SELECT drawings.UserId, DrawingId, Data, Word, user.Name FROM drawings ' +
+            'JOIN user ON user.UserId = drawings.UserId ' +
+            'WHERE DrawingId NOT IN (SELECT DrawingId FROM history WHERE history.UserId = ' +
             userId +
-            ') AND DRAWINGS.UserId != ' +
+            ') AND drawings.UserId != ' +
             userId +
-            ' AND DRAWINGS.Data IS NOT NULL' +
-            ' AND DRAWINGS.Valid >= 0'
+            ' AND drawings.Data IS NOT NULL' +
+            ' AND drawings.Valid >= 0'
 
         return DbConnection.runQuery(querySelectCurrentDrawing).then(rows => {
             if (rows == null || rows.length == 0) {
-                return DbConnection.runQuery(querySelectNewDrawing).then( rows => {
-                     return { rowsResult: rows, shouldUpdateHistoryFlag: true } }   
+                return DbConnection.runQuery(querySelectNewDrawing).then(rows => {
+                    return { rowsResult: rows, shouldUpdateHistoryFlag: true }
+                }
                 )
             }
-            return { rowsResult: rows, shouldUpdateHistoryFlag: false }   
+            return { rowsResult: rows, shouldUpdateHistoryFlag: false }
         })
     }
 
     _getResultFromHistoryQuery(userId, drawingId) {
         return (
-            'SELECT HISTORY.Result FROM HISTORY WHERE HISTORY.UserId = ' +
+            'SELECT history.Result FROM history WHERE history.UserId = ' +
             mysql.escape(userId) +
-            ' AND HISTORY.DrawingId = ' +
+            ' AND history.DrawingId = ' +
             mysql.escape(drawingId) +
             ' LIMIT 1'
         )
@@ -240,15 +241,15 @@ class DrawRepository {
 
     _updateHistoryWithResultQuery(historyResult, userId, drawingId) {
         return (
-            'UPDATE HISTORY SET HISTORY.Result = ' +
+            'UPDATE history SET history.Result = ' +
             historyResult +
-            ' WHERE HISTORY.UserId = ' +
+            ' WHERE history.UserId = ' +
             userId +
-            ' AND HISTORY.DrawingId = ' +
+            ' AND history.DrawingId = ' +
             drawingId +
-            ' AND (HISTORY.Result = ' +
+            ' AND (history.Result = ' +
             this.resultDrawingSelected +
-            ' OR HISTORY.Result = ' +
+            ' OR history.Result = ' +
             this.resultDrawingHinted +
             ')'
         )
@@ -256,26 +257,26 @@ class DrawRepository {
 
     _getCorrectWordQuery(drawingId) {
         return (
-            'SELECT DRAWINGS.Word FROM DRAWINGS WHERE DRAWINGS.DrawingId = ' +
+            'SELECT drawings.Word FROM drawings WHERE drawings.DrawingId = ' +
             drawingId
         )
     }
 
     _insertUserIdByDrawingIdToScoresQuery(drawingId) {
         return (
-            'INSERT IGNORE INTO SCORES (UserId) SELECT UserId FROM DRAWINGS WHERE DRAWINGS.DrawingId = ' +
+            'INSERT IGNORE INTO scores (UserId) SELECT UserId FROM drawings WHERE drawings.DrawingId = ' +
             drawingId
         )
     }
 
     _insertUserIdToScoresQuery(userId) {
-        return 'INSERT IGNORE INTO SCORES (UserId) VALUES(' + userId + ')'
+        return 'INSERT IGNORE INTO scores (UserId) VALUES(' + userId + ')'
     }
 
     _incDrawScoreQuery(drawingId) {
         return (
-            'UPDATE SCORES SET SCORES.DrawScore = IFNULL(SCORES.DrawScore, 0) + 1' +
-            ' WHERE SCORES.UserId = (SELECT UserId FROM DRAWINGS WHERE DRAWINGS.DrawingId = ' +
+            'UPDATE scores SET scores.DrawScore = IFNULL(scores.DrawScore, 0) + 1' +
+            ' WHERE scores.UserId = (SELECT UserId FROM drawings WHERE drawings.DrawingId = ' +
             drawingId +
             ')'
         )
@@ -283,8 +284,8 @@ class DrawRepository {
 
     _incGuessScoreQuery(userId, score) {
         return (
-            'UPDATE SCORES SET SCORES.GuessScore = IFNULL(SCORES.GuessScore, 0) + ' + score +
-            ' WHERE SCORES.UserId = ' +
+            'UPDATE scores SET scores.GuessScore = IFNULL(scores.GuessScore, 0) + ' + score +
+            ' WHERE scores.UserId = ' +
             userId
         )
     }

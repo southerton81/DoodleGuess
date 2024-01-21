@@ -28,13 +28,13 @@ class NewsRepository {
     }
 
     _getGuessNewsQuery(currentUserId) {
-        return ('SELECT USER.Name, DRAWINGS.Word, UNIX_TIMESTAMP(HISTORY.Timestamp) AS UNIX_TS ' +
-            'FROM DRAWINGS ' +
+        return ('SELECT user.Name, drawings.Word, UNIX_TIMESTAMP(history.Timestamp) AS UNIX_TS ' +
+            'FROM drawings ' +
 
-            'JOIN HISTORY ON HISTORY.DrawingId = DRAWINGS.DrawingId ' +
-            'JOIN USER ON USER.UserId = HISTORY.UserId ' +
+            'JOIN history ON history.DrawingId = drawings.DrawingId ' +
+            'JOIN user ON user.UserId = history.UserId ' +
             
-            'WHERE (DRAWINGS.UserId = ' + currentUserId + ' AND History.Result = 1) ORDER BY UNIX_TS DESC LIMIT 20;')
+            'WHERE (drawings.UserId = ' + currentUserId + ' AND history.Result = 1) ORDER BY UNIX_TS DESC LIMIT 20;')
 
         /*
         Find all results from history for CurrentUserId as an author of drawing.
@@ -47,13 +47,13 @@ class NewsRepository {
     } 
 
     _getCommentsNewsQuery(currentUserId) {
-        return ('SELECT USER.Name, DRAWINGS.Word, COMMENTS.Comment, UNIX_TIMESTAMP(COMMENTS.Timestamp) AS UNIX_TS ' +
-        'FROM COMMENTS ' +
+        return ('SELECT user.Name, drawings.Word, comments.Comment, UNIX_TIMESTAMP(comments.Timestamp) AS UNIX_TS ' +
+        'FROM comments ' +
 
-        'JOIN DRAWINGS ON DRAWINGS.DrawingId = COMMENTS.DrawingId ' +
-        'JOIN USER ON USER.UserId = COMMENTS.UserId ' +
+        'JOIN drawings ON drawings.DrawingId = comments.DrawingId ' +
+        'JOIN user ON user.UserId = comments.UserId ' +
 
-        'WHERE DRAWINGS.UserId =' + currentUserId + ' ORDER BY UNIX_TS DESC LIMIT 20;')
+        'WHERE drawings.UserId =' + currentUserId + ' ORDER BY UNIX_TS DESC LIMIT 20;')
 
         /* 
         Find all recent user Name, Comment, Timestamp of users who commented my drawings.

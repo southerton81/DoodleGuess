@@ -13,7 +13,8 @@ var pool = mysql.createPool({
     user: user,
     password: password,
     database: database,
-    debug: false
+    debug: false,
+    port: 3306,
 })
 
 

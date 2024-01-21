@@ -8,7 +8,7 @@ var UserNotFoundError = require('../error/errors.js').UserNotFoundError
 class LoginRepository {
     login(userName, userPassword) {
         return new Promise((resolve, reject) => {
-            var query = 'SELECT * FROM USER WHERE Name = ' + mysql.escape(userName)
+            var query = 'SELECT * FROM user WHERE Name = ' + mysql.escape(userName)
             DbConnection.runQuery(query)
                 .then(rows => {
                     if (rows != null && rows.length > 0) {
@@ -32,7 +32,7 @@ class LoginRepository {
     register(userName, userPassword) {
         let hashedPassword = pwdhashing(userPassword)
         var user = new User(null, userName, hashedPassword)
-        var query = 'INSERT INTO USER SET ' + mysql.escape(user)
+        var query = 'INSERT INTO user SET ' + mysql.escape(user)
         return DbConnection.runQuery(query)
     }
 }

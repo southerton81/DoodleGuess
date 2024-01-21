@@ -17,7 +17,7 @@ class UserRepository {
     findUser(userName, password) {
         return new Promise((resolve, reject) => {
             var query =
-                'SELECT * FROM USER WHERE Name = ' + mysql.escape(userName)
+                'SELECT * FROM user WHERE Name = ' + mysql.escape(userName)
             DbConnection.runQuery(query)
                 .then(rows => {
                     if (rows != null && rows.length > 0) {
@@ -45,9 +45,9 @@ class UserRepository {
     getUserScore(userId) {
         return new Promise((resolve, reject) => {
             var query =
-                'SELECT USER.Name, SCORES.GuessScore, SCORES.DrawScore ' +
-                'FROM USER LEFT JOIN SCORES ON USER.UserId = SCORES.UserId ' +
-                'WHERE USER.UserId = ' +
+                'SELECT user.Name, scores.GuessScore, scores.DrawScore ' +
+                'FROM user LEFT JOIN scores ON user.UserId = scores.UserId ' +
+                'WHERE user.UserId = ' +
                 mysql.escape(userId) +
                 ' LIMIT 1'
             DbConnection.runQuery(query)
@@ -72,8 +72,8 @@ class UserRepository {
     getHighscores() {
         return new Promise((resolve, reject) => {
             var query =
-                'SELECT USER.Name, ifnull(SCORES.GuessScore, 0) + ifnull(SCORES.DrawScore, 0) as TotalScore ' +
-                'FROM USER LEFT JOIN SCORES ON USER.UserId = SCORES.UserId ORDER BY TotalScore DESC'
+                'SELECT user.Name, ifnull(scores.GuessScore, 0) + ifnull(scores.DrawScore, 0) as TotalScore ' +
+                'FROM user LEFT JOIN scores ON user.UserId = scores.UserId ORDER BY TotalScore DESC'
             DbConnection.runQuery(query)
                 .then(rows => {
                     let scores = []
@@ -97,7 +97,7 @@ class UserRepository {
     deleteUser(userId) {
         return new Promise((resolve, reject) => {
             var query =
-                'DELETE FROM USER WHERE UserId = ' + mysql.escape(userId)
+                'DELETE FROM user WHERE UserId = ' + mysql.escape(userId)
             DbConnection.runQuery(query)
                 .then(rows => {
                     return resolve()

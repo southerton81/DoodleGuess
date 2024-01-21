@@ -11,7 +11,7 @@ class CommentsRepository {
         let commentsRows = await DbConnection.runQuery(this._getCommentsQuery(drawingId))
         let commentsWithUserNames = commentsRows.map (async commentRow => { 
             let userId = commentRow.UserId 
-            let userQuery = 'SELECT USER.Name FROM USER WHERE UserId = ' + userId
+            let userQuery = 'SELECT user.Name FROM user WHERE UserId = ' + userId
             let userRow = await DbConnection.runQuery(userQuery)
             return { userName: userRow[0].Name, comment: commentRow.Comment }
         })
@@ -21,13 +21,13 @@ class CommentsRepository {
 
     async createComment(userId, drawingId, commentText) {
         let comment = new Comment(userId, drawingId, commentText) 
-        var insertQuery = 'INSERT INTO COMMENTS SET ' + mysql.escape(comment) 
+        var insertQuery = 'INSERT INTO comments SET ' + mysql.escape(comment) 
         await DbConnection.runQuery(insertQuery)
     }
 
     _getCommentsQuery(drawingId) {
-        return ('SELECT COMMENTS.UserId, COMMENTS.Comment, COMMENTS.Timestamp FROM COMMENTS ' +
-            'WHERE COMMENTS.DrawingId = ' + drawingId)
+        return ('SELECT comments.UserId, comments.Comment, comments.Timestamp FROM comments ' +
+            'WHERE comments.DrawingId = ' + drawingId)
     }
 }
 
