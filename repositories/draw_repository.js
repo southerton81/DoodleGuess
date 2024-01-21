@@ -65,19 +65,16 @@ class DrawRepository {
         })
     }
 
-    getRandomDrawing(userId) {
+    getMostRecentDrawing(userId) {
         return this._selectAvailableDrawings(userId)
             .then(result => {
                 let rows = result.rowsResult
                 let updateHistoryFlag = result.shouldUpdateHistoryFlag
                 if (rows != null && rows.length > 0) {
-                    let randomRow = Math.round(
-                        Math.random() * (rows.length - 1)
-                    )
-                    let drawingId = rows[randomRow].DrawingId
-                    let data = rows[randomRow].Data
-                    let word = rows[randomRow].Word.trim()
-                    let userName = rows[randomRow].Name
+                    let drawingId = rows[0].DrawingId
+                    let data = rows[0].Data
+                    let word = rows[0].Word.trim()
+                    let userName = rows[0].Name
 
                     let guessDrawing = new GuessDrawing(drawingId, word, data, userName)
 
@@ -97,7 +94,7 @@ class DrawRepository {
                 }
                 return Promise.reject(
                     new DatabaseError(
-                        'getRandomDrawing: No available drawings found'
+                        'getMostRecentDrawing: No available drawings found'
                     )
                 )
             })
@@ -216,7 +213,8 @@ class DrawRepository {
             ') AND drawings.UserId != ' +
             userId +
             ' AND drawings.Data IS NOT NULL' +
-            ' AND drawings.Valid >= 0'
+            ' AND drawings.Valid >= 0' +
+            ' ORDER BY DrawingId DESC LIMIT 1'
 
         return DbConnection.runQuery(querySelectCurrentDrawing).then(rows => {
             if (rows == null || rows.length == 0) {

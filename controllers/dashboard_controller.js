@@ -65,7 +65,7 @@ DashboardController.saveDrawing = function (req, res, next) {
 
 DashboardController.getDrawing = function (req, res, next) {
     drawRepository
-        .getRandomDrawing(req.user.UserId)
+        .getMostRecentDrawing(req.user.UserId)
         .then(drawing => {
             let drawingId = drawing.DrawingId
             let data = drawing.Data
